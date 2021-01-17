@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,8 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const {
   half,
@@ -32,7 +31,7 @@ function FactoryDef(
   speed,
   moduleSlots,
   energyUsage,
-  fuel
+  fuel,
 ) {
   this.name = name;
   this.icon_col = col;
@@ -46,16 +45,16 @@ function FactoryDef(
 }
 FactoryDef.prototype = {
   constructor: FactoryDef,
-  less: function (other) {
+  less(other) {
     if (!this.speed.equal(other.speed)) {
       return this.speed.less(other.speed);
     }
     return this.moduleSlots < other.moduleSlots;
   },
-  makeFactory: function (spec, recipe) {
+  makeFactory(spec, recipe) {
     return new Factory(this, spec, recipe);
   },
-  canBeacon: function () {
+  canBeacon() {
     return this.moduleSlots > 0;
   },
 };
@@ -69,7 +68,7 @@ function MinerDef(
   speed,
   moduleSlots,
   energyUsage,
-  fuel
+  fuel,
 ) {
   FactoryDef.call(
     this,
@@ -81,7 +80,7 @@ function MinerDef(
     0,
     moduleSlots,
     energyUsage,
-    fuel
+    fuel,
   );
   this.mining_power = power;
   this.mining_speed = speed;
@@ -107,7 +106,7 @@ function RocketLaunchDef(
   moduleSlots,
   energyUsage,
   fuel,
-  partRecipe
+  partRecipe,
 ) {
   FactoryDef.call(
     this,
@@ -119,7 +118,7 @@ function RocketLaunchDef(
     speed,
     moduleSlots,
     energyUsage,
-    fuel
+    fuel,
   );
   this.partRecipe = partRecipe;
 }
@@ -138,7 +137,7 @@ function RocketSiloDef(
   moduleSlots,
   energyUsage,
   fuel,
-  partRecipe
+  partRecipe,
 ) {
   FactoryDef.call(
     this,
@@ -150,7 +149,7 @@ function RocketSiloDef(
     speed,
     moduleSlots,
     energyUsage,
-    fuel
+    fuel,
   );
   this.partRecipe = partRecipe;
 }
@@ -168,13 +167,13 @@ function Factory(factoryDef, spec, recipe) {
 }
 Factory.prototype = {
   constructor: Factory,
-  setFactory: function (factoryDef, spec) {
+  setFactory(factoryDef, spec) {
     this.name = factoryDef.name;
     this.factory = factoryDef;
     if (this.modules.length > factoryDef.moduleSlots) {
       this.modules.length = factoryDef.moduleSlots;
     }
-    var toAdd = null;
+    let toAdd = null;
     if (spec.defaultModule && spec.defaultModule.canUse(this.recipe)) {
       toAdd = spec.defaultModule;
     }
@@ -182,42 +181,41 @@ Factory.prototype = {
       this.modules.push(toAdd);
     }
   },
-  getModule: function (index) {
+  getModule(index) {
     return this.modules[index];
   },
   // Returns true if the module change requires a recalculation.
-  setModule: function (index, module) {
+  setModule(index, module) {
     if (index >= this.modules.length) {
       return false;
     }
-    var oldModule = this.modules[index];
-    var needRecalc =
-      (oldModule && oldModule.hasProdEffect()) ||
-      (module && module.hasProdEffect());
+    const oldModule = this.modules[index];
+    const needRecalc = (oldModule && oldModule.hasProdEffect())
+      || (module && module.hasProdEffect());
     this.modules[index] = module;
     return needRecalc;
   },
-  speedEffect: function (spec) {
-    var speed = one;
-    for (var i = 0; i < this.modules.length; i++) {
-      var module = this.modules[i];
+  speedEffect(spec) {
+    let speed = one;
+    for (let i = 0; i < this.modules.length; i++) {
+      const module = this.modules[i];
       if (!module) {
         continue;
       }
       speed = speed.add(module.speed);
     }
     if (this.modules.length > 0) {
-      var beaconModule = this.beaconModule;
+      const { beaconModule } = this;
       if (beaconModule) {
         speed = speed.add(beaconModule.speed.mul(this.beaconCount).mul(half));
       }
     }
     return speed;
   },
-  prodEffect: function (spec) {
-    var prod = one;
-    for (var i = 0; i < this.modules.length; i++) {
-      var module = this.modules[i];
+  prodEffect(spec) {
+    let prod = one;
+    for (let i = 0; i < this.modules.length; i++) {
+      const module = this.modules[i];
       if (!module) {
         continue;
       }
@@ -225,54 +223,54 @@ Factory.prototype = {
     }
     return prod;
   },
-  powerEffect: function (spec) {
-    var power = one;
-    for (var i = 0; i < this.modules.length; i++) {
-      var module = this.modules[i];
+  powerEffect(spec) {
+    let power = one;
+    for (let i = 0; i < this.modules.length; i++) {
+      const module = this.modules[i];
       if (!module) {
         continue;
       }
       power = power.add(module.power);
     }
     if (this.modules.length > 0) {
-      var beaconModule = this.beaconModule;
+      const { beaconModule } = this;
       if (beaconModule) {
         power = power.add(beaconModule.power.mul(this.beaconCount).mul(half));
       }
     }
-    var minimum = RationalFromFloats(1, 5);
+    const minimum = RationalFromFloats(1, 5);
     if (power.less(minimum)) {
       power = minimum;
     }
     return power;
   },
-  powerUsage: function (spec, count) {
-    var power = this.factory.energyUsage;
+  powerUsage(spec, count) {
+    let power = this.factory.energyUsage;
     if (this.factory.fuel) {
       return { fuel: this.factory.fuel, power: power.mul(count) };
     }
     // Default drain value.
-    var drain = power.div(RationalFromFloat(30));
-    var divmod = count.divmod(one);
+    const drain = power.div(RationalFromFloat(30));
+    const divmod = count.divmod(one);
     power = power.mul(count);
     if (!divmod.remainder.isZero()) {
-      var idle = one.sub(divmod.remainder);
+      const idle = one.sub(divmod.remainder);
       power = power.add(idle.mul(drain));
     }
     power = power.mul(this.powerEffect(spec));
-    return { fuel: 'electric', power: power };
+    return { fuel: 'electric', power };
   },
-  recipeRate: function (spec, recipe) {
+  recipeRate(spec, recipe) {
     return recipe.time
       .reciprocate()
       .mul(this.factory.speed)
       .mul(this.speedEffect(spec));
   },
-  copyModules: function (other, recipe) {
-    var length = Math.max(this.modules.length, other.modules.length);
-    var needRecalc = false;
-    for (var i = 0; i < length; i++) {
-      var module = this.getModule(i);
+  copyModules(other, recipe) {
+    const length = Math.max(this.modules.length, other.modules.length);
+    let needRecalc = false;
+    for (let i = 0; i < length; i++) {
+      const module = this.getModule(i);
       if (!module || module.canUse(recipe)) {
         needRecalc = other.setModule(i, module) || needRecalc;
       }
@@ -290,8 +288,8 @@ function Miner(factory, spec, recipe) {
 }
 Miner.prototype = Object.create(Factory.prototype);
 Miner.prototype.recipeRate = function (spec, recipe) {
-  var miner = this.factory;
-  var rate;
+  const miner = this.factory;
+  let rate;
   if (useLegacyCalculations) {
     rate = miner.mining_power.sub(recipe.hardness);
   } else {
@@ -303,24 +301,24 @@ Miner.prototype.recipeRate = function (spec, recipe) {
     .mul(this.speedEffect(spec));
 };
 Miner.prototype.prodEffect = function (spec) {
-  var prod = Factory.prototype.prodEffect.call(this, spec);
+  const prod = Factory.prototype.prodEffect.call(this, spec);
   return prod.add(spec.miningProd);
 };
 
-var rocketLaunchDuration = RationalFromFloats(2475, 60);
+const rocketLaunchDuration = RationalFromFloats(2475, 60);
 
 function launchRate(spec, partRecipe) {
-  var partItem = partRecipe.products[0].item;
-  var partFactory = spec.getFactory(partRecipe);
-  var gives = partRecipe.gives(partItem, spec);
+  const partItem = partRecipe.products[0].item;
+  const partFactory = spec.getFactory(partRecipe);
+  const gives = partRecipe.gives(partItem, spec);
   // The base rate at which the silo can make rocket parts.
-  var rate = Factory.prototype.recipeRate.call(partFactory, spec, partRecipe);
+  const rate = Factory.prototype.recipeRate.call(partFactory, spec, partRecipe);
   // Number of times to complete the rocket part recipe per launch.
-  var perLaunch = RationalFromFloat(100).div(gives);
+  const perLaunch = RationalFromFloat(100).div(gives);
   // Total length of time required to launch a rocket.
-  var time = perLaunch.div(rate).add(rocketLaunchDuration);
-  var launchRateNew = time.reciprocate();
-  var partRate = perLaunch.div(time);
+  const time = perLaunch.div(rate).add(rocketLaunchDuration);
+  const launchRateNew = time.reciprocate();
+  const partRate = perLaunch.div(time);
   return { part: partRate, launch: launchRateNew };
 }
 
@@ -329,7 +327,7 @@ function RocketLaunch(factory, spec, recipe) {
 }
 RocketLaunch.prototype = Object.create(Factory.prototype);
 RocketLaunch.prototype.recipeRate = function (spec, recipe) {
-  const partRecipe = this.factory.partRecipe;
+  const { partRecipe } = this.factory;
   return launchRate(spec, partRecipe).launch;
 };
 
@@ -338,11 +336,11 @@ function RocketSilo(factory, spec, recipe) {
 }
 RocketSilo.prototype = Object.create(Factory.prototype);
 RocketSilo.prototype.recipeRate = function (spec, recipe) {
-  const partRecipe = this.factory.partRecipe;
+  const { partRecipe } = this.factory;
   return launchRate(spec, partRecipe).part;
 };
 
-var assembly_machine_categories = {
+const assembly_machine_categories = {
   'advanced-crafting': true,
   crafting: true,
   'crafting-with-fluid': true,
@@ -379,30 +377,30 @@ function FactorySpec(factories, settings) {
 
 FactorySpec.prototype = {
   constructor: FactorySpec,
-  useMinimum: function (recipe) {
+  useMinimum(recipe) {
     return recipe.category in assembly_machine_categories;
   },
-  useFurnace: function (recipe) {
+  useFurnace(recipe) {
     return recipe.category === 'smelting';
   },
-  getFactoryDef: function (recipe) {
+  getFactoryDef(recipe) {
     if (this.useFurnace(recipe)) {
       return this.furnace;
     }
-    var factories = this.factories[recipe.category];
+    const factories = this.factories[recipe.category];
     if (!factories) {
       return null;
     }
     if (!this.useMinimum(recipe)) {
       return factories[factories.length - 1];
     }
-    var factoryDef;
-    for (var i = 0; i < factories.length; i++) {
+    let factoryDef;
+    for (let i = 0; i < factories.length; i++) {
       factoryDef = factories[i];
       if (
-        factoryDef.less(this.minimum) ||
-        (useLegacyCalculations &&
-          factoryDef.max_ing < recipe.ingredients.length)
+        factoryDef.less(this.minimum)
+        || (useLegacyCalculations
+          && factoryDef.max_ing < recipe.ingredients.length)
       ) {
         continue;
       }
@@ -413,15 +411,15 @@ FactorySpec.prototype = {
   // TODO: This should be very cheap. Calling getFactoryDef on each call
   // should not be necessary. Changing the minimum should proactively update
   // all of the factories to which it applies.
-  getFactory: function (recipe) {
+  getFactory(recipe) {
     if (!recipe.category) {
       return null;
     }
-    var factoryDef = this.getFactoryDef(recipe);
+    const factoryDef = this.getFactoryDef(recipe);
     if (!factoryDef) {
       return null;
     }
-    var factory = this.spec[recipe.name];
+    const factory = this.spec[recipe.name];
     // If the minimum changes, update the factory the next time we get it.
     if (factory) {
       factory.setFactory(factoryDef, this);
@@ -431,15 +429,15 @@ FactorySpec.prototype = {
     this.spec[recipe.name].beaconCount = this.defaultBeaconCount;
     return this.spec[recipe.name];
   },
-  getCount: function (recipe, rate) {
-    var factory = this.getFactory(recipe);
+  getCount(recipe, rate) {
+    const factory = this.getFactory(recipe);
     if (!factory) {
       return zero;
     }
     return rate.div(factory.recipeRate(this, recipe));
   },
-  recipeRate: function (recipe) {
-    var factory = this.getFactory(recipe);
+  recipeRate(recipe) {
+    const factory = this.getFactory(recipe);
     if (!factory) {
       return null;
     }
@@ -448,9 +446,9 @@ FactorySpec.prototype = {
 };
 
 function getFactories(data, recipes) {
-  var factories = [];
-  var pumpDef = data['offshore-pump']['offshore-pump'];
-  var pump = new FactoryDef(
+  const factories = [];
+  const pumpDef = data['offshore-pump']['offshore-pump'];
+  const pump = new FactoryDef(
     'offshore-pump',
     pumpDef.icon_col,
     pumpDef.icon_row,
@@ -459,11 +457,11 @@ function getFactories(data, recipes) {
     one,
     0,
     zero,
-    null
+    null,
   );
   factories.push(pump);
-  var reactorDef = data.reactor['nuclear-reactor'];
-  var reactor = new FactoryDef(
+  const reactorDef = data.reactor['nuclear-reactor'];
+  const reactor = new FactoryDef(
     'nuclear-reactor',
     reactorDef.icon_col,
     reactorDef.icon_row,
@@ -472,18 +470,18 @@ function getFactories(data, recipes) {
     one,
     0,
     zero,
-    null
+    null,
   );
   factories.push(reactor);
-  var boilerDef = data.boiler.boiler;
+  const boilerDef = data.boiler.boiler;
   // XXX: Should derive this from game data.
-  var boiler_energy;
+  let boiler_energy;
   if (useLegacyCalculations) {
     boiler_energy = RationalFromFloat(3600000);
   } else {
     boiler_energy = RationalFromFloat(1800000);
   }
-  var boiler = new FactoryDef(
+  const boiler = new FactoryDef(
     'boiler',
     boilerDef.icon_col,
     boilerDef.icon_row,
@@ -492,13 +490,13 @@ function getFactories(data, recipes) {
     one,
     0,
     boiler_energy,
-    'chemical'
+    'chemical',
   );
   factories.push(boiler);
-  var siloDef = data['rocket-silo']['rocket-silo'];
+  const siloDef = data['rocket-silo']['rocket-silo'];
 
   const partRecipe = recipes['rocket-part'];
-  var launch = new RocketLaunchDef(
+  const launch = new RocketLaunchDef(
     'rocket-silo',
     siloDef.icon_col,
     siloDef.icon_row,
@@ -508,10 +506,10 @@ function getFactories(data, recipes) {
     0,
     zero,
     null,
-    partRecipe
+    partRecipe,
   );
   factories.push(launch);
-  for (var type in { 'assembling-machine': true, furnace: true }) {
+  for (const type in { 'assembling-machine': true, furnace: true }) {
     for (var name in data[type]) {
       var d = data[type][name];
       var fuel = null;
@@ -528,8 +526,8 @@ function getFactories(data, recipes) {
           RationalFromFloat(d.crafting_speed),
           d.module_slots,
           RationalFromFloat(d.energy_usage),
-          fuel
-        )
+          fuel,
+        ),
       );
     }
   }
@@ -546,8 +544,8 @@ function getFactories(data, recipes) {
         d.module_slots,
         RationalFromFloat(d.energy_usage),
         null,
-        partRecipe
-      )
+        partRecipe,
+      ),
     );
   }
   for (var name in data['mining-drill']) {
@@ -575,8 +573,8 @@ function getFactories(data, recipes) {
         RationalFromFloat(d.mining_speed),
         d.module_slots,
         RationalFromFloat(d.energy_usage),
-        fuel
-      )
+        fuel,
+      ),
     );
   }
   return factories;
@@ -584,10 +582,10 @@ function getFactories(data, recipes) {
 
 function getCategorizedFactories(data, recipes) {
   const factories = getFactories(data, recipes);
-  let factoryCategories = {};
-  for (var i = 0; i < factories.length; i++) {
-    var factory = factories[i];
-    for (var j = 0; j < factory.categories.length; j++) {
+  const factoryCategories = {};
+  for (let i = 0; i < factories.length; i++) {
+    const factory = factories[i];
+    for (let j = 0; j < factory.categories.length; j++) {
       var category = factory.categories[j];
       if (!(category in factoryCategories)) {
         factoryCategories[category] = [];
@@ -602,7 +600,7 @@ function getCategorizedFactories(data, recipes) {
 }
 
 module.exports = {
-  getCategorizedFactories: getCategorizedFactories,
-  FactorySpec: FactorySpec,
-  Factory: Factory,
+  getCategorizedFactories,
+  FactorySpec,
+  Factory,
 };

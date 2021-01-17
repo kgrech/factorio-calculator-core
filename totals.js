@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,8 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const { zero } = require('./rational');
 
@@ -22,7 +21,7 @@ function Requirements(rate, item) {
 }
 Requirements.prototype = {
   constructor: Requirements,
-  add: function (reqs, suppress) {
+  add(reqs, suppress) {
     if (reqs.item && !suppress) {
       this.dependencies.push(reqs);
     }
@@ -41,10 +40,10 @@ function Totals(rate, item) {
 }
 Totals.prototype = {
   constructor: Totals,
-  combine: function (other, suppress) {
+  combine(other, suppress) {
     this.reqs.add(other.reqs, suppress);
-    var newTopo = [];
-    for (var i = 0; i < this.topo.length; i++) {
+    let newTopo = [];
+    for (let i = 0; i < this.topo.length; i++) {
       var recipeName = this.topo[i];
       if (!(recipeName in other.totals)) {
         newTopo.push(recipeName);
@@ -62,21 +61,21 @@ Totals.prototype = {
     }
     this.topo = newTopo;
   },
-  add: function (recipeName, rate, notopo) {
+  add(recipeName, rate, notopo) {
     this.topo.push(recipeName);
     this.totals[recipeName] = (this.totals[recipeName] || zero).add(rate);
   },
-  addUnfinished: function (itemName, rate) {
+  addUnfinished(itemName, rate) {
     this.unfinished[itemName] = (this.unfinished[itemName] || zero).add(rate);
   },
-  addWaste: function (itemName, rate) {
+  addWaste(itemName, rate) {
     this.waste[itemName] = (this.waste[itemName] || zero).add(rate);
   },
-  get: function (recipeName) {
+  get(recipeName) {
     return this.totals[recipeName];
   },
-  getWaste: function (itemName) {
-    var waste = this.waste[itemName];
+  getWaste(itemName) {
+    const waste = this.waste[itemName];
     if (!waste) {
       return zero;
     }
@@ -85,5 +84,5 @@ Totals.prototype = {
 };
 
 module.exports = {
-  Totals: Totals,
+  Totals,
 };

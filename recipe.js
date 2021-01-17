@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,8 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const {
   zero,
@@ -27,13 +26,13 @@ function Ingredient(amount, item) {
 }
 
 function makeIngredient(data, i, items) {
-  var name;
+  let name;
   if ('name' in i) {
     name = i.name;
   } else {
     name = i[0];
   }
-  var amount;
+  let amount;
   if ('amount' in i) {
     amount = i.amount;
   } else if ('amount_min' in i && 'amount_max' in i) {
@@ -64,53 +63,53 @@ function Recipe(name, col, row, category, time, ingredients, products) {
 }
 Recipe.prototype = {
   constructor: Recipe,
-  gives: function (item, spec) {
-    var factory = spec.getFactory(this);
-    var prod = one;
+  gives(item, spec) {
+    const factory = spec.getFactory(this);
+    let prod = one;
     if (factory) {
       prod = factory.prodEffect(spec);
     }
-    for (var i = 0; i < this.products.length; i++) {
-      var product = this.products[i];
+    for (let i = 0; i < this.products.length; i++) {
+      const product = this.products[i];
       if (product.item.name === item.name) {
         return product.amount.mul(prod);
       }
     }
   },
-  fuelIngredient: function (spec) {
-    const preferredFuel = spec.settings.preferredFuel;
-    var factory = spec.getFactory(this);
+  fuelIngredient(spec) {
+    const { preferredFuel } = spec.settings;
+    const factory = spec.getFactory(this);
     if (
-      !factory ||
-      !factory.factory.fuel ||
-      factory.factory.fuel !== 'chemical'
+      !factory
+      || !factory.factory.fuel
+      || factory.factory.fuel !== 'chemical'
     ) {
       return [];
     }
-    var basePower = factory.powerUsage(spec, one).power;
-    var baseRate = factory.recipeRate(spec, this);
-    var perItemEnergy = basePower.div(baseRate);
-    var fuelAmount = perItemEnergy.div(preferredFuel.value);
+    const basePower = factory.powerUsage(spec, one).power;
+    const baseRate = factory.recipeRate(spec, this);
+    const perItemEnergy = basePower.div(baseRate);
+    const fuelAmount = perItemEnergy.div(preferredFuel.value);
     return [new Ingredient(fuelAmount, preferredFuel.item)];
   },
-  getIngredients: function (spec) {
+  getIngredients(spec) {
     return this.ingredients.concat(this.fuelIngredient(spec));
   },
-  makesResource: function () {
+  makesResource() {
     return false;
   },
-  allModules: function () {
+  allModules() {
     return false;
   },
 };
 
 function makeRecipe(data, d, items) {
-  var time = RationalFromFloat(d.energy_required);
-  var products = [];
+  const time = RationalFromFloat(d.energy_required);
+  const products = [];
   for (var i = 0; i < d.results.length; i++) {
     products.push(makeIngredient(data, d.results[i], items));
   }
-  var ingredients = [];
+  const ingredients = [];
   for (var i = 0; i < d.ingredients.length; i++) {
     ingredients.push(makeIngredient(data, d.ingredients[i], items));
   }
@@ -121,7 +120,7 @@ function makeRecipe(data, d, items) {
     d.category,
     time,
     ingredients,
-    products
+    products,
   );
 }
 
@@ -134,7 +133,7 @@ function ResourceRecipe(item) {
     null,
     zero,
     [],
-    [new Ingredient(one, item)]
+    [new Ingredient(one, item)],
   );
 }
 ResourceRecipe.prototype = Object.create(Recipe.prototype);
@@ -150,7 +149,7 @@ function MiningRecipe(
   hardness,
   mining_time,
   ingredients,
-  products
+  products,
 ) {
   this.hardness = hardness;
   this.mining_time = mining_time;
@@ -172,9 +171,9 @@ function ignoreRecipe(d) {
 }
 
 function getRecipeGraph(data) {
-  var recipes = {};
-  var items = getItems(data);
-  var water = getItem(data, items, 'water');
+  const recipes = {};
+  const items = getItems(data);
+  const water = getItem(data, items, 'water');
   recipes.water = new Recipe(
     'water',
     water.icon_col,
@@ -182,9 +181,9 @@ function getRecipeGraph(data) {
     'water',
     RationalFromFloats(1, 1200),
     [],
-    [new Ingredient(one, water)]
+    [new Ingredient(one, water)],
   );
-  var reactor = data.items['nuclear-reactor'];
+  const reactor = data.items['nuclear-reactor'];
   recipes['nuclear-reactor-cycle'] = new Recipe(
     'nuclear-reactor-cycle',
     reactor.icon_col,
@@ -195,9 +194,9 @@ function getRecipeGraph(data) {
     [
       new Ingredient(one, getItem(data, items, 'used-up-uranium-fuel-cell')),
       new Ingredient(one, items['nuclear-reactor-cycle']),
-    ]
+    ],
   );
-  var rocket = data.items['rocket-silo'];
+  const rocket = data.items['rocket-silo'];
   recipes['rocket-launch'] = new Recipe(
     'rocket-launch',
     rocket.icon_col,
@@ -207,18 +206,18 @@ function getRecipeGraph(data) {
     [
       new Ingredient(
         RationalFromFloat(100),
-        getItem(data, items, 'rocket-part')
+        getItem(data, items, 'rocket-part'),
       ),
       new Ingredient(one, getItem(data, items, 'satellite')),
     ],
     [
       new Ingredient(
         RationalFromFloat(1000),
-        getItem(data, items, 'space-science-pack')
+        getItem(data, items, 'space-science-pack'),
       ),
-    ]
+    ],
   );
-  var steam = data.items.steam;
+  const { steam } = data.items;
   recipes.steam = new Recipe(
     'steam',
     steam.icon_col,
@@ -226,39 +225,39 @@ function getRecipeGraph(data) {
     'boiler',
     RationalFromFloats(1, 60),
     [new Ingredient(one, getItem(data, items, 'water'))],
-    [new Ingredient(one, getItem(data, items, 'steam'))]
+    [new Ingredient(one, getItem(data, items, 'steam'))],
   );
 
   for (var name in data.recipes) {
-    var recipe = data.recipes[name];
+    const recipe = data.recipes[name];
     if (ignoreRecipe(recipe)) {
       continue;
     }
     var r = makeRecipe(data, recipe, items);
     recipes[recipe.name] = r;
   }
-  for (var entityName in data.resource) {
-    var entity = data.resource[entityName];
-    var category = entity.category;
+  for (const entityName in data.resource) {
+    const entity = data.resource[entityName];
+    let { category } = entity;
     if (!category) {
       category = 'basic-solid';
     }
     if (category !== 'basic-solid') {
       continue;
     }
-    var name = entity.name;
-    var props = entity.minable;
-    var ingredients = null;
+    var { name } = entity;
+    const props = entity.minable;
+    let ingredients = null;
     if ('required_fluid' in props) {
       ingredients = [
         new Ingredient(
           RationalFromFloat(props.fluid_amount / 10),
-          items[props.required_fluid]
+          items[props.required_fluid],
         ),
       ];
     }
-    var products = [];
-    for (var i = 0; i < props.results.length; i++) {
+    const products = [];
+    for (let i = 0; i < props.results.length; i++) {
       products.push(makeIngredient(data, props.results[i], items));
     }
     var hardness;
@@ -271,15 +270,15 @@ function getRecipeGraph(data) {
       name,
       entity.icon_col,
       entity.icon_row,
-      'mining-' + category,
+      `mining-${category}`,
       hardness,
       RationalFromFloat(props.mining_time),
       ingredients,
-      products
+      products,
     );
   }
-  for (var itemName in items) {
-    var item = items[itemName];
+  for (const itemName in items) {
+    const item = items[itemName];
     if (item.recipeNames.length === 0) {
       var r = new ResourceRecipe(item);
       recipes[r.name] = r;
@@ -289,6 +288,6 @@ function getRecipeGraph(data) {
 }
 
 module.exports = {
-  getRecipeGraph: getRecipeGraph,
-  Recipe: Recipe,
+  getRecipeGraph,
+  Recipe,
 };

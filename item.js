@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,8 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const { Totals } = require('./totals.js');
 
@@ -28,40 +27,40 @@ function Item(name, col, row, phase, group, subgroup, order) {
 }
 Item.prototype = {
   constructor: Item,
-  addRecipe: function (recipe) {
+  addRecipe(recipe) {
     this.recipeNames.push(recipe.name);
   },
-  addUse: function (recipe) {
+  addUse(recipe) {
     this.usesNames.push(recipe.name);
   },
-  isWeird: function (recipes) {
+  isWeird(recipes) {
     return (
-      this.recipeNames.length > 1 ||
-      recipes[this.recipeNames[0]].solveGroup !== null
+      this.recipeNames.length > 1
+      || recipes[this.recipeNames[0]].solveGroup !== null
     );
   },
-  produce: function (rate, ignore, spec, recipes) {
-    var totals = new Totals(rate, this);
+  produce(rate, ignore, spec, recipes) {
+    const totals = new Totals(rate, this);
     if (this.isWeird(recipes)) {
       totals.addUnfinished(this.name, rate);
       return totals;
     }
-    var recipeName = this.recipeNames[0];
-    var recipe = recipes[recipeName];
-    var gives = recipe.gives(this, spec);
+    const recipeName = this.recipeNames[0];
+    const recipe = recipes[recipeName];
+    const gives = recipe.gives(this, spec);
     rate = rate.div(gives);
     totals.add(recipe.name, rate);
     if (ignore[recipe.name]) {
       return totals;
     }
-    var ingredients = recipe.ingredients.concat(recipe.fuelIngredient(spec));
-    for (var i = 0; i < ingredients.length; i++) {
-      var ing = ingredients[i];
-      var subTotals = ing.item.produce(
+    const ingredients = recipe.ingredients.concat(recipe.fuelIngredient(spec));
+    for (let i = 0; i < ingredients.length; i++) {
+      const ing = ingredients[i];
+      const subTotals = ing.item.produce(
         rate.mul(ing.amount),
         ignore,
         spec,
-        recipes
+        recipes,
       );
       totals.combine(subTotals);
     }
@@ -72,32 +71,31 @@ Item.prototype = {
 function getItem(data, items, name) {
   if (name in items) {
     return items[name];
-  } else {
-    var d = data.items[name];
-    var phase;
-    if (d.type === 'fluid') {
-      phase = 'fluid';
-    } else {
-      phase = 'solid';
-    }
-    var item = new Item(
-      name,
-      d.icon_col,
-      d.icon_row,
-      phase,
-      d.group,
-      d.subgroup,
-      d.order
-    );
-    items[name] = item;
-    return item;
   }
+  const d = data.items[name];
+  let phase;
+  if (d.type === 'fluid') {
+    phase = 'fluid';
+  } else {
+    phase = 'solid';
+  }
+  const item = new Item(
+    name,
+    d.icon_col,
+    d.icon_row,
+    phase,
+    d.group,
+    d.subgroup,
+    d.order,
+  );
+  items[name] = item;
+  return item;
 }
 
 function getItems(data) {
-  var items = {};
-  var cycleName = 'nuclear-reactor-cycle';
-  var reactor = data.items['nuclear-reactor'];
+  const items = {};
+  const cycleName = 'nuclear-reactor-cycle';
+  const reactor = data.items['nuclear-reactor'];
   items[cycleName] = new Item(
     cycleName,
     reactor.icon_col,
@@ -105,13 +103,13 @@ function getItems(data) {
     'abstract',
     'production',
     'energy',
-    'f[nuclear-energy]-d[reactor-cycle]'
+    'f[nuclear-energy]-d[reactor-cycle]',
   );
   return items;
 }
 
 module.exports = {
-  getItem: getItem,
-  getItems: getItems,
-  Item: Item,
+  getItem,
+  getItems,
+  Item,
 };

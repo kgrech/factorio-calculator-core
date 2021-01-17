@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,8 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const { findGroups } = require('./subgraphs');
 const { MatrixSolver } = require('./vectorize');
@@ -31,9 +30,9 @@ function walk(item, seen, solvers, allRecipes) {
   }
   seen[item.name] = item;
   for (var i = 0; i < item.recipeNames.length; i++) {
-    var recipe = allRecipes[item.recipeNames[i]];
-    for (var j = 0; j < recipe.ingredients.length; j++) {
-      var ing = recipe.ingredients[j];
+    const recipe = allRecipes[item.recipeNames[i]];
+    for (let j = 0; j < recipe.ingredients.length; j++) {
+      const ing = recipe.ingredients[j];
       if (ing.item.name in seen) {
         continue;
       }
@@ -51,7 +50,7 @@ function insertBefore(array, newItem, existingItem) {
     array.push(newItem);
     return;
   }
-  for (var i = 0; i < array.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     if (array[i] === existingItem) {
       array.splice(i, 0, newItem);
       return;
@@ -61,22 +60,22 @@ function insertBefore(array, newItem, existingItem) {
 }
 
 function topologicalOrder(matrixSolvers, allRecipes) {
-  var result = [];
-  for (var i = 0; i < matrixSolvers.length; i++) {
-    var m = matrixSolvers[i];
-    var items = {};
+  const result = [];
+  for (let i = 0; i < matrixSolvers.length; i++) {
+    const m = matrixSolvers[i];
+    const items = {};
     // Obtain set of items depended on by the group.
-    for (var j = 0; j < m.inputRecipes.length; j++) {
-      var recipe = m.inputRecipes[j];
-      for (var k = 0; k < recipe.ingredients.length; k++) {
-        var ing = recipe.ingredients[k];
+    for (let j = 0; j < m.inputRecipes.length; j++) {
+      const recipe = m.inputRecipes[j];
+      for (let k = 0; k < recipe.ingredients.length; k++) {
+        const ing = recipe.ingredients[k];
         items[ing.item.name] = ing.item;
       }
     }
-    var dep = null;
-    for (var itemName in items) {
-      var item = items[itemName];
-      var m2 = walk(item, {}, matrixSolvers, allRecipes);
+    let dep = null;
+    for (const itemName in items) {
+      const item = items[itemName];
+      const m2 = walk(item, {}, matrixSolvers, allRecipes);
       if (m2) {
         dep = m2;
         break;
@@ -95,11 +94,11 @@ function Solver(items, recipes) {
 }
 Solver.prototype = {
   constructor: Solver,
-  findSubgraphs: function (spec, allRecipes) {
-    var r = findGroups(spec, this.items, this.recipes);
+  findSubgraphs(spec, allRecipes) {
+    const r = findGroups(spec, this.items, this.recipes);
     // Clear all group tags.
     for (var recipeName in this.recipes) {
-      var recipe = this.recipes[recipeName];
+      const recipe = this.recipes[recipeName];
       recipe.displayGroup = null;
       recipe.solveGroup = null;
     }
@@ -110,7 +109,7 @@ Solver.prototype = {
         group[recipeName].displayGroup = i;
       }
     }
-    var groups = r.groups;
+    const { groups } = r;
     this.matrixSolvers = [];
     for (var i = 0; i < groups.length; i++) {
       var group = groups[i];
@@ -121,20 +120,20 @@ Solver.prototype = {
     }
     this.matrixSolvers = topologicalOrder(this.matrixSolvers, allRecipes);
   },
-  addDisabledRecipes: function (recipes) {
-    for (var recipeName of recipes) {
+  addDisabledRecipes(recipes) {
+    for (const recipeName of recipes) {
       this.disabledRecipes[recipeName] = true;
     }
   },
-  removeDisabledRecipes: function (recipes) {
-    for (var recipeName in recipes) {
+  removeDisabledRecipes(recipes) {
+    for (const recipeName in recipes) {
       delete this.disabledRecipes[recipeName];
     }
   },
-  solve: function (rates, ignore, spec) {
-    var totals = new Totals();
+  solve(rates, ignore, spec) {
+    const totals = new Totals();
     for (var itemName in rates) {
-      var item = this.items[itemName];
+      const item = this.items[itemName];
       var rate = rates[itemName];
       var subTotals = item.produce(rate, ignore, spec, this.recipes);
       totals.combine(subTotals);
@@ -142,22 +141,22 @@ Solver.prototype = {
     if (Object.keys(totals.unfinished).length === 0) {
       return totals;
     }
-    for (var i = 0; i < this.matrixSolvers.length; i++) {
-      var solver = this.matrixSolvers[i];
-      var match = solver.match(totals.unfinished);
+    for (let i = 0; i < this.matrixSolvers.length; i++) {
+      const solver = this.matrixSolvers[i];
+      const match = solver.match(totals.unfinished);
       if (Object.keys(match).length === 0) {
         continue;
       }
-      var solution = solver.solveFor(match, spec, this.disabledRecipes);
+      const solution = solver.solveFor(match, spec, this.disabledRecipes);
       for (var itemName in match) {
         delete totals.unfinished[itemName];
       }
-      for (var recipeName in solution.solution) {
+      for (const recipeName in solution.solution) {
         var rate = solution.solution[recipeName];
-        var recipe = this.recipes[recipeName];
+        const recipe = this.recipes[recipeName];
         if (solver.inputRecipes.indexOf(recipe) !== -1) {
-          var ing = recipe.products[0];
-          var subRate = recipe.gives(ing.item, spec).mul(rate);
+          const ing = recipe.products[0];
+          const subRate = recipe.gives(ing.item, spec).mul(rate);
           var subTotals = ing.item.produce(subRate, ignore, spec, this.recipes);
           totals.combine(subTotals, true);
         } else {
@@ -173,6 +172,6 @@ Solver.prototype = {
 };
 
 module.exports = {
-  UnknownRecipe: UnknownRecipe,
-  Solver: Solver,
+  UnknownRecipe,
+  Solver,
 };

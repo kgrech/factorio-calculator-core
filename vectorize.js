@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,21 +10,20 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const { minusOne, zero, one } = require('./rational');
 const { Matrix } = require('./matrix');
 const { simplex } = require('./simplex');
 
-var PRIORITY = ['uranium-ore', 'steam', 'coal', 'crude-oil', 'water'];
+const PRIORITY = ['uranium-ore', 'steam', 'coal', 'crude-oil', 'water'];
 
 const useLegacyCalculations = false;
 
 function MatrixSolver(spec, recipes, allWorldRecipes) {
-  var products = {};
-  var ingredients = {};
-  var recipeArray = [];
+  const products = {};
+  const ingredients = {};
+  const recipeArray = [];
   for (var recipeName in recipes) {
     var recipe = recipes[recipeName];
     recipeArray.push(recipe);
@@ -38,14 +37,14 @@ function MatrixSolver(spec, recipes, allWorldRecipes) {
       ingredients[ing.item.name] = ing.item;
     }
   }
-  var items = [];
+  const items = [];
   this.items = items;
   // Map of items produced by this matrix.
   this.outputs = {};
   // Array of items produced by this matrix.
   this.outputItems = [];
   // Map from item name to waste-item column (minus offset).
-  var wasteItems = {};
+  const wasteItems = {};
   for (var itemName in products) {
     var item = products[itemName];
     this.outputs[item.name] = item;
@@ -64,8 +63,8 @@ function MatrixSolver(spec, recipes, allWorldRecipes) {
     var recipeName = item.recipeNames[0];
     this.inputRecipes.push(allWorldRecipes[recipeName]);
   }
-  var allRecipes = recipeArray.concat(this.inputRecipes);
-  var itemIndexes = {};
+  const allRecipes = recipeArray.concat(this.inputRecipes);
+  const itemIndexes = {};
   for (var i = 0; i < items.length; i++) {
     itemIndexes[items[i].name] = i;
   }
@@ -77,9 +76,9 @@ function MatrixSolver(spec, recipes, allWorldRecipes) {
       this.inputColumns.push(i);
     }
   }
-  var rows = allRecipes.length + 2;
-  var cols = items.length + allRecipes.length + 3;
-  var recipeMatrix = new Matrix(rows, cols);
+  const rows = allRecipes.length + 2;
+  const cols = items.length + allRecipes.length + 3;
+  const recipeMatrix = new Matrix(rows, cols);
   for (var i = 0; i < recipeArray.length; i++) {
     var recipe = recipeArray[i];
     var ings = recipe.getIngredients(spec);
@@ -124,20 +123,20 @@ function MatrixSolver(spec, recipes, allWorldRecipes) {
 }
 MatrixSolver.prototype = {
   constructor: MatrixSolver,
-  match: function (products) {
-    var result = {};
-    for (var itemName in products) {
+  match(products) {
+    const result = {};
+    for (const itemName in products) {
       if (itemName in this.outputs) {
         result[itemName] = products[itemName];
       }
     }
     return result;
   },
-  getPriorityRatio: function (A) {
-    var min = null;
-    var max = null;
-    for (var i = 0; i < A.mat.length; i++) {
-      var x = A.mat[i].abs();
+  getPriorityRatio(A) {
+    let min = null;
+    let max = null;
+    for (let i = 0; i < A.mat.length; i++) {
+      const x = A.mat[i].abs();
       if (x.isZero()) {
         continue;
       }
@@ -150,16 +149,16 @@ MatrixSolver.prototype = {
     }
     return max.div(min);
   },
-  setCost: function (A) {
+  setCost(A) {
     // Recipe tax cost.
     A.setIndex(this.recipes.length, A.cols - 1, one);
-    var ratio = this.getPriorityRatio(A);
+    const ratio = this.getPriorityRatio(A);
     // Cost == 1 already "spent" on recipe tax.
-    var cost = ratio;
+    let cost = ratio;
     // Maps priority number to column number.
-    for (var i = PRIORITY.length - 1; i >= 0; i--) {
-      var name = PRIORITY[i];
-      var row = this.recipeIndexes[name];
+    for (let i = PRIORITY.length - 1; i >= 0; i--) {
+      const name = PRIORITY[i];
+      const row = this.recipeIndexes[name];
       if (!row) {
         continue;
       }
@@ -167,9 +166,9 @@ MatrixSolver.prototype = {
       cost = cost.mul(ratio);
     }
   },
-  solveFor: function (products, spec, disabled) {
-    var A = this.matrix.copy();
-    for (var itemName in products) {
+  solveFor(products, spec, disabled) {
+    const A = this.matrix.copy();
+    for (const itemName in products) {
       if (itemName in this.itemIndexes) {
         var col = this.itemIndexes[itemName];
         var rate = products[itemName];
@@ -177,7 +176,7 @@ MatrixSolver.prototype = {
       }
     }
     // Zero out disabled recipes
-    for (var recipeName in disabled) {
+    for (const recipeName in disabled) {
       if (recipeName in this.recipeIndexes) {
         var i = this.recipeIndexes[recipeName];
         A.zeroRow(i);
@@ -185,13 +184,13 @@ MatrixSolver.prototype = {
     }
     // Apply productivity effects.
     for (var i = 0; i < this.recipes.length; i++) {
-      var recipe = this.recipes[i];
+      const recipe = this.recipes[i];
       if (recipe.name in disabled) {
         continue;
       }
-      var factory = spec.getFactory(recipe);
+      const factory = spec.getFactory(recipe);
       if (factory) {
-        var prod = factory.prodEffect(spec);
+        const prod = factory.prodEffect(spec);
         if (prod.equal(one)) {
           continue;
         }
@@ -201,7 +200,7 @@ MatrixSolver.prototype = {
             var k = this.itemIndexes[ing.item.name];
             A.setIndex(i, k, zero);
           }
-          var ings = recipe.getIngredients(spec);
+          const ings = recipe.getIngredients(spec);
           for (var j = 0; j < ings.length; j++) {
             var ing = ings[j];
             var k = this.itemIndexes[ing.item.name];
@@ -216,7 +215,7 @@ MatrixSolver.prototype = {
           }
         } else {
           for (var j = 0; j < this.items.length; j++) {
-            var n = A.index(i, j);
+            const n = A.index(i, j);
             if (!zero.less(n)) {
               continue;
             }
@@ -230,7 +229,7 @@ MatrixSolver.prototype = {
     // Solve.
     simplex(A);
     // Convert array of rates into map from recipe name to rate.
-    var solution = {};
+    const solution = {};
     for (var i = 0; i < this.recipes.length; i++) {
       var col = this.items.length + i + 1;
       var rate = A.index(A.rows - 1, col);
@@ -238,7 +237,7 @@ MatrixSolver.prototype = {
         solution[this.recipes[i].name] = rate;
       }
     }
-    var waste = {};
+    const waste = {};
     for (var i = 0; i < this.outputItems.length; i++) {
       var rate = A.index(A.rows - 1, i);
       if (zero.less(rate)) {
@@ -246,10 +245,10 @@ MatrixSolver.prototype = {
       }
     }
     this.lastSolution = A;
-    return { solution: solution, waste: waste };
+    return { solution, waste };
   },
 };
 
 module.exports = {
-  MatrixSolver: MatrixSolver,
+  MatrixSolver,
 };

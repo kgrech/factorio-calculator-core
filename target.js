@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,8 +10,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const { zero, one, RationalFromString } = require('./rational');
 const { displayCount, displayRate } = require('./display');
@@ -23,11 +22,11 @@ function isFactoryTarget(solver, build_targets, recipeName) {
       return true;
     }
   }
-  for (var i = 0; i < build_targets.length; i++) {
-    var target = build_targets[i];
-    var item = solver.items[target.itemName];
-    for (var j = 0; j < item.recipes.length; j++) {
-      var recipe = item.recipes[j];
+  for (let i = 0; i < build_targets.length; i++) {
+    const target = build_targets[i];
+    const item = solver.items[target.itemName];
+    for (let j = 0; j < item.recipes.length; j++) {
+      const recipe = item.recipes[j];
       if (recipe.name === recipeName && target.changedFactory) {
         return true;
       }
@@ -48,11 +47,11 @@ BuildTarget.prototype = {
   constructor: BuildTarget,
   // Returns the rate at which this item is being requested. Also updates
   // the text boxes in response to changes in options.
-  getRate: function (solver, spec) {
-    var item = solver.items[this.itemName];
-    var recipeName = item.recipeNames[this.recipeIndex];
-    var recipe = solver.recipes[recipeName];
-    var baseRate = spec.recipeRate(recipe);
+  getRate(solver, spec) {
+    const item = solver.items[this.itemName];
+    const recipeName = item.recipeNames[this.recipeIndex];
+    const recipe = solver.recipes[recipeName];
+    let baseRate = spec.recipeRate(recipe);
     if (baseRate) {
       baseRate = baseRate.mul(recipe.gives(item, spec));
       if (this.changedFactory) {
@@ -63,31 +62,31 @@ BuildTarget.prototype = {
     }
     return this.rateValue;
   },
-  setFactories: function (factories) {
+  setFactories(factories) {
     this.factoriesValue = RationalFromString(factories);
     this.changedFactory = true;
     this.rateValue = zero;
   },
-  setRate: function (spec, rate) {
+  setRate(spec, rate) {
     this.rateValue = RationalFromString(rate).div(spec.displayRateFactor);
     this.changedFactory = false;
     this.factoriesValue = zero;
   },
-  setItemName: function (itemName) {
+  setItemName(itemName) {
     this.itemName = itemName;
   },
-  setRecipeIndex: function (recipeIndex) {
+  setRecipeIndex(recipeIndex) {
     this.recipeIndex = recipeIndex;
   },
-  getRateString: function (spec) {
+  getRateString(spec) {
     return displayRate(this.rateValue, spec);
   },
-  getFactoriesString: function (spec) {
+  getFactoriesString(spec) {
     return displayCount(this.factoriesValue, spec);
   },
 };
 
 module.exports = {
-  isFactoryTarget: isFactoryTarget,
-  BuildTarget: BuildTarget,
+  isFactoryTarget,
+  BuildTarget,
 };

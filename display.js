@@ -1,4 +1,4 @@
-/*Copyright 2015-2019 Kirk McDonald
+/* Copyright 2015-2019 Kirk McDonald
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,13 +10,12 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.*/
-'use strict';
+limitations under the License. */
 
 const { zero, RationalFromFloat } = require('./rational');
 
 // value format
-var displayFormat = 'decimal';
+const displayFormat = 'decimal';
 
 function formatName(name) {
   name = name.replace(new RegExp('-', 'g'), ' ');
@@ -27,28 +26,26 @@ function displayRate(x, spec) {
   x = x.mul(spec.displayRateFactor);
   if (displayFormat === 'rational') {
     return x.toMixed();
-  } else {
-    return x.toDecimal(spec.settings.ratePrecision);
   }
+  return x.toDecimal(spec.settings.ratePrecision);
 }
 
 function displayCount(x, spec) {
   if (displayFormat === 'rational') {
     return x.toMixed();
-  } else {
-    return x.toUpDecimal(spec.settings.countPrecision);
   }
+  return x.toUpDecimal(spec.settings.countPrecision);
 }
 
 function align(s, prec) {
   if (displayFormat === 'rational') {
     return s;
   }
-  var idx = s.indexOf('.');
+  let idx = s.indexOf('.');
   if (idx === -1) {
     idx = s.length;
   }
-  var toAdd = prec - s.length + idx;
+  let toAdd = prec - s.length + idx;
   if (prec > 0) {
     toAdd += 1;
   }
@@ -67,19 +64,19 @@ function alignCount(x, spec) {
   return align(displayCount(x, spec), spec.settings.countPrecision);
 }
 
-var powerSuffixes = ['\u00A0W', 'kW', 'MW', 'GW', 'TW', 'PW'];
+const powerSuffixes = ['\u00A0W', 'kW', 'MW', 'GW', 'TW', 'PW'];
 
 function alignPower(x, spec) {
-  var thousand = RationalFromFloat(1000);
-  var i = 0;
+  const thousand = RationalFromFloat(1000);
+  let i = 0;
   while (thousand.less(x) && i < powerSuffixes.length - 1) {
     x = x.div(thousand);
     i++;
   }
   return (
-    align(displayCount(x, spec), spec.settings.countPrecision) +
-    ' ' +
-    powerSuffixes[i]
+    `${align(displayCount(x, spec), spec.settings.countPrecision)
+    } ${
+      powerSuffixes[i]}`
   );
 }
 
@@ -89,14 +86,14 @@ function RecipeGroup(id) {
 }
 RecipeGroup.prototype = {
   constructor: RecipeGroup,
-  equal: function (other) {
+  equal(other) {
     if (this.id !== other.id) {
       return false;
     }
     if (this.recipes.length !== other.recipes.length) {
       return false;
     }
-    for (var i = 0; i < this.recipes.length; i++) {
+    for (let i = 0; i < this.recipes.length; i++) {
       if (this.recipes[i].name !== other.recipes[i].name) {
         return false;
       }
@@ -108,18 +105,18 @@ RecipeGroup.prototype = {
 // === Refactored RecipeTable.display solution ====
 
 function getItemRates(totals, recipes, spec) {
-  var itemCounts = {};
-  for (var i = 0; i < totals.topo.length; i++) {
-    var recipeName = totals.topo[i];
-    var recipeRate = totals.totals[recipeName];
-    var recipe = recipes[recipeName];
-    for (var j = 0; j < recipe.products.length; j++) {
-      var ing = recipe.products[j];
+  const itemCounts = {};
+  for (let i = 0; i < totals.topo.length; i++) {
+    const recipeName = totals.topo[i];
+    const recipeRate = totals.totals[recipeName];
+    const recipe = recipes[recipeName];
+    for (let j = 0; j < recipe.products.length; j++) {
+      const ing = recipe.products[j];
       if (!(ing.item.name in itemCounts)) {
         itemCounts[ing.item.name] = zero;
       }
       itemCounts[ing.item.name] = itemCounts[ing.item.name].add(
-        recipeRate.mul(recipe.gives(ing.item, spec))
+        recipeRate.mul(recipe.gives(ing.item, spec)),
       );
     }
   }
@@ -127,11 +124,11 @@ function getItemRates(totals, recipes, spec) {
 }
 
 function getFuelUsers(totals, recipes, spec) {
-  var fuelUsers = new Map();
-  for (var i = 0; i < totals.topo.length; i++) {
-    var recipeName = totals.topo[i];
-    var recipe = recipes[recipeName];
-    for (let fuelIng of recipe.fuelIngredient(spec)) {
+  const fuelUsers = new Map();
+  for (let i = 0; i < totals.topo.length; i++) {
+    const recipeName = totals.topo[i];
+    const recipe = recipes[recipeName];
+    for (const fuelIng of recipe.fuelIngredient(spec)) {
       if (!fuelUsers.has(fuelIng.item)) {
         fuelUsers.set(fuelIng.item, []);
       }
@@ -142,23 +139,21 @@ function getFuelUsers(totals, recipes, spec) {
 }
 
 function getGroups(totals, recipes) {
-  var groups = [];
-  var groupMap = {};
-  for (var i = 0; i < totals.topo.length; i++) {
-    var recipeName = totals.topo[i];
-    var recipe = recipes[recipeName];
+  const groups = [];
+  const groupMap = {};
+  for (let i = 0; i < totals.topo.length; i++) {
+    const recipeName = totals.topo[i];
+    const recipe = recipes[recipeName];
     var group;
     if (recipe.displayGroup === null) {
       group = new RecipeGroup(null);
       groups.push(group);
+    } else if (recipe.displayGroup in groupMap) {
+      group = groupMap[recipe.displayGroup];
     } else {
-      if (recipe.displayGroup in groupMap) {
-        group = groupMap[recipe.displayGroup];
-      } else {
-        group = new RecipeGroup(recipe.displayGroup);
-        groups.push(group);
-        groupMap[recipe.displayGroup] = group;
-      }
+      group = new RecipeGroup(recipe.displayGroup);
+      groups.push(group);
+      groupMap[recipe.displayGroup] = group;
     }
     group.recipes.push(recipe);
   }
@@ -166,13 +161,13 @@ function getGroups(totals, recipes) {
 }
 
 module.exports = {
-  formatName: formatName,
-  displayRate: displayRate,
-  displayCount: displayCount,
-  alignRate: alignRate,
-  alignCount: alignCount,
-  alignPower: alignPower,
-  getItemRates: getItemRates,
-  getFuelUsers: getFuelUsers,
-  getGroups: getGroups,
+  formatName,
+  displayRate,
+  displayCount,
+  alignRate,
+  alignCount,
+  alignPower,
+  getItemRates,
+  getFuelUsers,
+  getGroups,
 };
