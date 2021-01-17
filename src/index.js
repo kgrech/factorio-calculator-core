@@ -23,6 +23,11 @@ const {
   zero, one, Rational, RationalFromFloat,
 } = require('./rational');
 
+const gameDataVanilla110 = require('../data/vanilla-1.1.0.json');
+const gameDataVanilla110Expensive = require('../data/vanilla-1.1.0-expensive.json');
+const gameDataVanilla100 = require('../data/vanilla-1.0.0.json');
+const gameDataVanilla100Expensive = require('../data/vanilla-1.0.0-expensive.json');
+
 module.exports = {
   BuildTarget,
   FactorySpec,
@@ -49,4 +54,8 @@ module.exports = {
   pipeLength,
   pipeThroughput,
   zero,
+  gameDataVanilla110,
+  gameDataVanilla110Expensive,
+  gameDataVanilla100,
+  gameDataVanilla100Expensive,
 };

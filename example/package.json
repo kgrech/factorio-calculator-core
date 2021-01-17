@@ -1,0 +1,20 @@
+{
+  "name": "factorio-calculator-core-example",
+  "version": "1.0.1",
+  "description": "Example usage of factorio-calculator-core",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "test"
+  },
+  "author": "Konstantin Grech <kgrech@mail.ru> ",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "eslint": "^7.18.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  },
+  "dependencies": {
+    "@kgrech/factorio-calculator-core": "^1.0.1"
+  }
+}

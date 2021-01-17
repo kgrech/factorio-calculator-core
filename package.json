@@ -1,7 +1,7 @@
 {
   "name": "@kgrech/factorio-calculator-core",
-  "version": "1.0.0",
-  "description": "Contains the code of the core alrorithm of the factorio calculator",
+  "version": "1.0.1",
+  "description": "Contains the code of the core algorithm of the factorio calculator",
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint .",
@@ -15,7 +15,7 @@
   "keywords": [
     "factorio",
     "calculator",
-    "alrgorithm",
+    "algorithm",
     "core"
   ],
   "author": "Kirk McDonald, Konstantin Grech <kgrech@mail.ru> ",
@@ -24,5 +24,8 @@
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"
+  },
+  "dependencies": {
+    "big-integer": "^1.6.48"
   }
 }

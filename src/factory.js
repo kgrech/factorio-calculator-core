@@ -358,7 +358,7 @@ function compareFactories(a, b) {
 
 const displayRates = [one, RationalFromFloat(60), RationalFromFloat(3600)];
 
-function FactorySpec(factories, settings) {
+function FactorySpec(factories, settings, fuel) {
   this.settings = settings;
   this.factories = factories;
   this.furnace = factories.smelting[settings.preferredFurnaceIdx];
@@ -366,6 +366,7 @@ function FactorySpec(factories, settings) {
 
   this.miningProd = RationalFromFloat(settings.miningProductivity / 100.0);
   this.displayRateFactor = displayRates[settings.displayRateIdx];
+  this.preferredFuel = fuel[settings.preferredFuelIdx];
 
   this.defaultModule = null;
   this.defaultBeacon = null;

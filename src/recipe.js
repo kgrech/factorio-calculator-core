@@ -77,7 +77,7 @@ Recipe.prototype = {
     }
   },
   fuelIngredient(spec) {
-    const { preferredFuel } = spec.settings;
+    const { preferredFuel } = spec;
     const factory = spec.getFactory(this);
     if (
       !factory

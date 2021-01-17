@@ -1,0 +1,12 @@
+**/node_modules/**/*
+example/
+
+.travis.yml
+LICENSE
+README.md
+.gitignore
+.eslintrc.js
+.vscode/
+
+# macOS
+.DS_Store
