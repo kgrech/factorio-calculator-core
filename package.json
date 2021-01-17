@@ -1,12 +1,16 @@
 {
-  "name": "factorio-calculator-core",
+  "name": "@kgrech/factorio-calculator-core",
   "version": "1.0.0",
   "description": "Contains the code of the core alrorithm of the factorio calculator",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "lint": "eslint .",
     "lint-fix": "eslint --fix .",
     "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kgrech/factorio-calculator-core.git"
   },
   "keywords": [
     "factorio",
@@ -14,7 +18,7 @@
     "alrgorithm",
     "core"
   ],
-  "author": "Kirk McDonald, Konstantin Grech",
+  "author": "Kirk McDonald, Konstantin Grech <kgrech@mail.ru> ",
   "license": "Apache-2.0",
   "devDependencies": {
     "eslint": "^7.18.0",
