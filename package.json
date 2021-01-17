@@ -1,0 +1,17 @@
+{
+  "name": "factorio-calculator-core",
+  "version": "1.0.0",
+  "description": "Contains the code of the core alrorithm of the factorio calculator",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "factorio",
+    "calculator",
+    "alrgorithm",
+    "core"
+  ],
+  "author": "Kirk McDonald, Konstantin Grech",
+  "license": "Apache-2.0"
+}
