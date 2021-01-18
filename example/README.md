@@ -12,13 +12,25 @@ npm start
 
 # Expected output
 ```
-
 === Available fuel types ===
 wood
 coal
 solid-fuel
 rocket-fuel
 nuclear-fuel
+
+
+
+=== Available modules types ===
+effectivity-module - productivity: 0, speed: 0 , power: -0.3
+effectivity-module-2 - productivity: 0, speed: 0 , power: -0.4
+effectivity-module-3 - productivity: 0, speed: 0 , power: -0.5
+productivity-module - productivity: 0.04, speed: -0.05 , power: 0.4
+productivity-module-2 - productivity: 0.06, speed: -0.1 , power: 0.6
+productivity-module-3 - productivity: 0.1, speed: -0.15 , power: 0.8
+speed-module - productivity: 0, speed: 0.2 , power: 0.5
+speed-module-2 - productivity: 0, speed: 0.3 , power: 0.6
+speed-module-3 - productivity: 0, speed: 0.5 , power: 0.7
 
 
 
@@ -65,33 +77,31 @@ express-transport-belt: 2700
 
 
 
-=== Configuring 60 of logistic-robot===
+=== Configuring 100 of logistic-robot===
 === Configuration results: ===
-logistic-robot: 60
-flying-robot-frame: 60
-electric-engine-unit: 60
-engine-unit: 60
-iron-gear-wheel: 60
-pipe: 120
-lubricant: 900
-battery: 120
-sulfuric-acid: 2400
-sulfur: 240
-steel-plate: 120
-advanced-circuit: 120
-electronic-circuit: 540
-iron-plate: 1548
-iron-ore: 1548
-plastic-bar: 240
-coal: 120
-copper-cable: 2100
-copper-plate: 1170
-copper-ore: 1170
-heavy-oil: 1721.91
-light-oil: 3715.86
-petroleum-gas: 6000
-solid-fuel: 39.82
-water: 15777.95
-crude-oil: 6887.63
-
+logistic-robot: 100
+flying-robot-frame: 100
+electric-engine-unit: 83.33
+engine-unit: 69.44
+iron-gear-wheel: 57.87
+pipe: 115.74
+lubricant: 1041.67
+battery: 166.67
+sulfuric-acid: 2564.10
+sulfur: 197.24
+steel-plate: 141.20
+advanced-circuit: 200
+electronic-circuit: 722.22
+iron-plate: 1687.71
+iron-ore: 1687.71
+plastic-bar: 333.33
+copper-cable: 2472.22
+copper-plate: 1158.30
+copper-ore: 1158.30
+coal: 256.08
+heavy-oil: 1198.05
+light-oil: 2543.34
+petroleum-gas: 4839.93
+water: 10904.67
+crude-oil: 3686.31
 ```

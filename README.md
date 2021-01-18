@@ -28,6 +28,7 @@ Please see example of minimal usage of the package in the [example](https://gith
 - BuildTarget
 - FactorySpec
 - Item
+- Module
 - Rational
 - RationalFromFloat
 - Recipe
@@ -35,6 +36,7 @@ Please see example of minimal usage of the package in the [example](https://gith
 - alignCount
 - alignPower
 - alignRate
+- displayCount
 - displayRate
 - formatName
 - getBelts
@@ -44,6 +46,7 @@ Please see example of minimal usage of the package in the [example](https://gith
 - getGroups
 - getItemGroups
 - getItemRates
+- getModules 
 - getRecipeGraph
 - getSprites
 - one

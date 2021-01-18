@@ -9,6 +9,8 @@ const {
   getFuel,
   getBelts,
   getItemRates,
+  getModules,
+  displayCount,
   displayRate,
 } = require('@kgrech/factorio-calculator-core');
 
@@ -18,23 +20,38 @@ const graph = getRecipeGraph(data);
 const items = graph[0]; // List of all items
 const recipes = graph[1]; // List of all recipes
 const fuels = getFuel(data, items).chemical; // List of chemical for furnaces
+const modules = getModules(data);
 
 const factories = getCategorizedFactories(data, recipes);
 const defaultSettings = {
   ratePrecision: 2, // defines behaviour of displayRate
-  countPrecision: 1, // defines behaviour of displayCount
+  countPrecision: 2, // defines behaviour of displayCount
   preferredFuelIdx: 1, // defines type of fuel to be used in fuels
   preferredFurnaceIdx: 1, // defines a furnace type to use out of factories.smelting
-  preferredMinimumAssemblerIdx: 0, // defines a factory type to use out of factories.crafting
+  preferredMinimumAssemblerIdx: 1, // defines a factory type to use out of factories.crafting
   miningProductivity: 0,
   displayRateIdx: 1, // index in [items/sec, items/min, items/h]
+  defaultModuleIdx: 5,
+  defaultBeaconIdx: -1,
+  defaultBeaconCount: 0,
 };
 // Create a factory specification
-const spec = new FactorySpec(factories, defaultSettings, fuels);
+const spec = new FactorySpec(factories, defaultSettings, fuels, modules);
 
 console.log('=== Available fuel types ===');
 fuels.forEach((fuel) => {
   console.log(fuel.name);
+});
+console.log('');
+console.log('');
+console.log('');
+
+console.log('=== Available modules types ===');
+modules.forEach((module) => {
+  const p = displayCount(module.productivity, spec);
+  const s = displayCount(module.speed, spec);
+  const w = displayCount(module.power, spec);
+  console.log(`${module.name} - productivity: ${p}, speed: ${s} , power: ${w}`);
 });
 console.log('');
 console.log('');
@@ -70,7 +87,7 @@ solver.findSubgraphs(spec, recipes);
 solver.addDisabledRecipes(['kovarex-enrichment-process']);
 
 const itemToConfigure = 'logistic-robot';
-const count = '60';
+const count = '100';
 
 // Define a build target
 console.log(`=== Configuring ${count} of ${itemToConfigure}===`);

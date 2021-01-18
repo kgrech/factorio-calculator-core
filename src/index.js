@@ -2,6 +2,7 @@ const {
   alignCount,
   alignPower,
   alignRate,
+  displayCount,
   displayRate,
   formatName,
   getItemRates,
@@ -22,6 +23,7 @@ const { Solver } = require('./solve');
 const {
   zero, one, Rational, RationalFromFloat,
 } = require('./rational');
+const { Module, getModules } = require('./module');
 
 const gameDataVanilla110 = require('../data/vanilla-1.1.0.json');
 const gameDataVanilla110Expensive = require('../data/vanilla-1.1.0-expensive.json');
@@ -32,6 +34,7 @@ module.exports = {
   BuildTarget,
   FactorySpec,
   Item,
+  Module,
   Rational,
   RationalFromFloat,
   Recipe,
@@ -39,6 +42,7 @@ module.exports = {
   alignCount,
   alignPower,
   alignRate,
+  displayCount,
   displayRate,
   formatName,
   getBelts,
@@ -48,6 +52,7 @@ module.exports = {
   getGroups,
   getItemGroups,
   getItemRates,
+  getModules,
   getRecipeGraph,
   getSprites,
   one,
