@@ -26,7 +26,17 @@ const { pipeLength, pipeThroughput } = require('./steps');
 const { Recipe } = require('./recipe');
 const { Solver } = require('./solve');
 const {
-  zero, one, Rational, RationalFromFloat,
+  minusOne,
+  zero,
+  one,
+  half,
+  hundred,
+  oneThird,
+  twoThirds,
+  Rational,
+  RationalFromFloat,
+  RationalFromFloats,
+  RationalFromString,
 } = require('./rational');
 const { Module, getModules } = require('./module');
 
@@ -45,6 +55,8 @@ module.exports = {
   Module,
   Rational,
   RationalFromFloat,
+  RationalFromFloats,
+  RationalFromString,
   Recipe,
   Solver,
   alignCount,
@@ -53,6 +65,10 @@ module.exports = {
   displayCount,
   displayRate,
   formatName,
+  gameDataVanilla100,
+  gameDataVanilla100Expensive,
+  gameDataVanilla110,
+  gameDataVanilla110Expensive,
   getBelts,
   getCategorizedFactories,
   getFuel,
@@ -63,12 +79,13 @@ module.exports = {
   getModules,
   getRecipeGraph,
   getSprites,
+  half,
+  hundred,
+  minusOne,
   one,
+  oneThird,
   pipeLength,
   pipeThroughput,
+  twoThirds,
   zero,
-  gameDataVanilla110,
-  gameDataVanilla110Expensive,
-  gameDataVanilla100,
-  gameDataVanilla100Expensive,
 };

@@ -199,18 +199,20 @@ function RationalFromFloats(p, q) {
   return new Rational(bigInt(p), bigInt(q));
 }
 
-var minusOne = new Rational(bigInt.minusOne, bigInt.one);
-var zero = new Rational(bigInt.zero, bigInt.one);
-var one = new Rational(bigInt.one, bigInt.one);
+const minusOne = new Rational(bigInt.minusOne, bigInt.one);
+const zero = new Rational(bigInt.zero, bigInt.one);
+const one = new Rational(bigInt.one, bigInt.one);
 const half = new Rational(bigInt.one, bigInt(2));
-var oneThird = new Rational(bigInt.one, bigInt(3));
-var twoThirds = new Rational(bigInt(2), bigInt(3));
+const oneThird = new Rational(bigInt.one, bigInt(3));
+const twoThirds = new Rational(bigInt(2), bigInt(3));
+const hundred = RationalFromFloat(100);
 
 module.exports = {
   minusOne,
   zero,
   one,
   half,
+  hundred,
   oneThird,
   twoThirds,
   Rational,
