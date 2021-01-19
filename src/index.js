@@ -10,8 +10,13 @@ const {
   getFuelUsers,
 } = require('./display');
 const { BuildTarget } = require('./target');
-const { getBelts } = require('./belt');
-const { getCategorizedFactories, FactorySpec } = require('./factory');
+const { Belt, getBelts } = require('./belt');
+const {
+  Factory,
+  FactoryDef,
+  FactorySpec,
+  getCategorizedFactories,
+} = require('./factory');
 const { getFuel } = require('./fuel');
 const { getItemGroups } = require('./group');
 const { getRecipeGraph } = require('./recipe');
@@ -31,7 +36,10 @@ const gameDataVanilla100 = require('../data/vanilla-1.0.0.json');
 const gameDataVanilla100Expensive = require('../data/vanilla-1.0.0-expensive.json');
 
 module.exports = {
+  Belt,
   BuildTarget,
+  Factory,
+  FactoryDef,
   FactorySpec,
   Item,
   Module,

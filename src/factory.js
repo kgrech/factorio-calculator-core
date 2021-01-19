@@ -605,7 +605,8 @@ function getCategorizedFactories(data, recipes) {
 }
 
 module.exports = {
-  getCategorizedFactories,
-  FactorySpec,
   Factory,
+  FactoryDef,
+  FactorySpec,
+  getCategorizedFactories,
 };

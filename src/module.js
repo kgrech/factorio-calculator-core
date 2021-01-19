@@ -81,6 +81,6 @@ function getModules(data) {
 }
 
 module.exports = {
-  getModules,
   Module,
+  getModules,
 };

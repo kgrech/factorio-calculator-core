@@ -51,5 +51,6 @@ function getBelts(data) {
 }
 
 module.exports = {
+  Belt,
   getBelts,
 };
