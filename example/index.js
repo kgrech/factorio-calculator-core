@@ -36,7 +36,7 @@ const defaultSettings = {
   defaultBeaconCount: 0,
 };
 // Create a factory specification
-const spec = new FactorySpec(factories, defaultSettings, fuels, modules);
+const spec = new FactorySpec(factories, defaultSettings, fuels, recipes, modules);
 
 console.log('=== Available fuel types ===');
 fuels.forEach((fuel) => {

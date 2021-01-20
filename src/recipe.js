@@ -69,12 +69,13 @@ Recipe.prototype = {
     if (factory) {
       prod = factory.prodEffect(spec);
     }
-    for (let i = 0; i < this.products.length; i++) {
+    for (let i = 0; i < this.products.length; i += 1) {
       const product = this.products[i];
       if (product.item.name === item.name) {
         return product.amount.mul(prod);
       }
     }
+    return zero;
   },
   fuelIngredient(spec) {
     const { preferredFuel } = spec;

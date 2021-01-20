@@ -13,10 +13,17 @@ const { BuildTarget } = require('./target');
 const { Belt, getBelts } = require('./belt');
 const {
   Factory,
-  FactoryDef,
-  FactorySpec,
-  getCategorizedFactories,
+  Miner,
+  RocketLaunch,
+  RocketSilo,
 } = require('./factory');
+const {
+  FactoryDef,
+  MinerDef,
+  RocketLaunchDef,
+  RocketSiloDef,
+  getCategorizedFactories,
+} = require('./factoryDef');
 const { getFuel } = require('./fuel');
 const { getItemGroups } = require('./group');
 const { getRecipeGraph } = require('./recipe');
@@ -25,6 +32,7 @@ const { Item } = require('./item');
 const { pipeLength, pipeThroughput } = require('./steps');
 const { Recipe } = require('./recipe');
 const { Solver } = require('./solve');
+const { FactorySpec } = require('./spec');
 const {
   minusOne,
   zero,
@@ -52,12 +60,18 @@ module.exports = {
   FactoryDef,
   FactorySpec,
   Item,
+  Miner,
+  MinerDef,
   Module,
   Rational,
   RationalFromFloat,
   RationalFromFloats,
   RationalFromString,
   Recipe,
+  RocketLaunch,
+  RocketLaunchDef,
+  RocketSilo,
+  RocketSiloDef,
   Solver,
   alignCount,
   alignPower,
