@@ -26,8 +26,10 @@ const assemblyMachineCategories = new Set([
 
 const displayRates = [one, RationalFromFloat(60), RationalFromFloat(3600)];
 
+const getModule = (modules, idx) => (idx !== -1 ? modules[idx] : null);
+
 class FactorySpec {
-  constructor(factories, settings, fuel, recipes, modules, moduleSpec = {}) {
+  constructor(factories, settings, fuel, recipes, modules, moduleIdxSpec = {}) {
     this.settings = settings;
     this.factories = factories;
     this.furnace = factories.smelting[settings.preferredFurnaceIdx];
@@ -40,12 +42,18 @@ class FactorySpec {
       .filter((idx) => idx >= 0 && idx < modules.length)
       .map((idx) => modules[idx]);
 
-    this.defaultBeacon = settings.defaultBeaconIdx !== -1
-      ? modules[settings.defaultBeaconIdx]
-      : null;
+    this.defaultBeacon = getModule(modules, settings.defaultBeaconIdx);
     this.defaultBeaconCount = RationalFromFloat(settings.defaultBeaconCount);
 
     this.ignore = {};
+    const moduleSpec = Object.fromEntries(
+      Object.entries(moduleIdxSpec).map(([recipeName, indexArray]) => {
+        const modulesArray = indexArray
+          .filter((idx) => idx >= 0 && idx < modules.length)
+          .map((idx) => getModule(modules, idx));
+        return [recipeName, modulesArray];
+      }),
+    );
     this.initFactories(recipes, moduleSpec);
   }
 
