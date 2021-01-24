@@ -26,7 +26,7 @@ const assemblyMachineCategories = new Set([
 
 const displayRates = [one, RationalFromFloat(60), RationalFromFloat(3600)];
 
-const getModule = (modules, idx) => (idx !== -1 ? modules[idx] : null);
+const getModule = (modules, idx) => (idx >= 0 && idx < modules.length ? modules[idx] : null);
 
 class FactorySpec {
   constructor(factories, settings, fuel, recipes, modules, moduleIdxSpec = {}) {
@@ -39,8 +39,7 @@ class FactorySpec {
     this.displayRateFactor = displayRates[settings.displayRateIdx];
     this.preferredFuel = fuel[settings.preferredFuelIdx];
     this.defaultModules = this.settings.defaultModuleIndices
-      .filter((idx) => idx >= 0 && idx < modules.length)
-      .map((idx) => modules[idx]);
+      .map((idx) => getModule(modules, idx));
 
     this.defaultBeacon = getModule(modules, settings.defaultBeaconIdx);
     this.defaultBeaconCount = RationalFromFloat(settings.defaultBeaconCount);
@@ -49,7 +48,6 @@ class FactorySpec {
     const moduleSpec = Object.fromEntries(
       Object.entries(moduleIdxSpec).map(([recipeName, indexArray]) => {
         const modulesArray = indexArray
-          .filter((idx) => idx >= 0 && idx < modules.length)
           .map((idx) => getModule(modules, idx));
         return [recipeName, modulesArray];
       }),

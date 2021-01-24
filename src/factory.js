@@ -38,10 +38,13 @@ class Factory {
   setModules(factoryDef, definedModules) {
     this.modules = [];
     definedModules
-      .filter((module) => module.canUse(this.recipe))
       .forEach((module) => {
         if (this.modules.length < factoryDef.moduleSlots) {
-          this.modules.push(module);
+          if (module && module != null && module.canUse(this.recipe)) {
+            this.modules.push(module);
+          } else {
+            this.modules.push(null);
+          }
         }
       });
     for (let i = this.modules.length; i < factoryDef.moduleSlots; i += 1) {
