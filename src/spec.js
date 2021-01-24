@@ -36,12 +36,9 @@ class FactorySpec {
     this.miningProd = RationalFromFloat(settings.miningProductivity / 100.0);
     this.displayRateFactor = displayRates[settings.displayRateIdx];
     this.preferredFuel = fuel[settings.preferredFuelIdx];
-    if (settings.defaultModuleIdx !== -1) {
-      const module = modules[settings.defaultModuleIdx];
-      this.defaultModules = [module, module, module, module];
-    } else {
-      this.defaultModules = [];
-    }
+    this.defaultModules = this.settings.defaultModuleIndices
+      .filter((idx) => idx >= 0 && idx < modules.length)
+      .map((idx) => modules[idx]);
 
     this.defaultBeacon = settings.defaultBeaconIdx !== -1
       ? modules[settings.defaultBeaconIdx]

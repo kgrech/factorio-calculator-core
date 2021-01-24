@@ -37,16 +37,15 @@ class Factory {
 
   setModules(factoryDef, definedModules) {
     this.modules = [];
-    let j = 0;
-    for (let i = 0; i < factoryDef.moduleSlots; i += 1) {
-      while (j < definedModules.length && !definedModules[j].canUse(this.recipe)) {
-        j += 1;
-      }
-      if (j < definedModules.length && definedModules[j].canUse(this.recipe)) {
-        this.modules.push(definedModules[j]);
-      } else {
-        this.modules.push(null);
-      }
+    definedModules
+      .filter((module) => module.canUse(this.recipe))
+      .forEach((module) => {
+        if (this.modules.length < factoryDef.moduleSlots) {
+          this.modules.push(module);
+        }
+      });
+    for (let i = this.modules.length; i < factoryDef.moduleSlots; i += 1) {
+      this.modules.push(null);
     }
   }
 

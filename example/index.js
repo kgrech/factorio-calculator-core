@@ -31,7 +31,7 @@ const defaultSettings = {
   preferredMinimumAssemblerIdx: 1, // defines a factory type to use out of factories.crafting
   miningProductivity: 0,
   displayRateIdx: 1, // index in [items/sec, items/min, items/h]
-  defaultModuleIdx: 5,
+  defaultModuleIndices: [5, 5, 5, 5],
   defaultBeaconIdx: -1,
   defaultBeaconCount: 0,
 };
