@@ -14,8 +14,9 @@ limitations under the License. */
 
 const { RationalFromFloat } = require('./rational');
 
-function Module(name, col, row, category, order, productivity, speed, power, limit) {
+function Module(id, name, col, row, category, order, productivity, speed, power, limit) {
   // Other module effects not modeled by this calculator.
+  this.id = id;
   this.name = name;
   this.icon_col = col;
   this.icon_row = row;
@@ -66,6 +67,7 @@ function getModules(data) {
     const power = RationalFromFloat((effect.consumption || {}).bonus || 0);
     const limit = item.limitation;
     modules.push(new Module(
+      i,
       name,
       item.icon_col,
       item.icon_row,
