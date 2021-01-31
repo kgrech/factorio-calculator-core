@@ -28,6 +28,17 @@ const displayRates = [one, RationalFromFloat(60), RationalFromFloat(3600)];
 
 const getModule = (modules, idx) => (idx >= 0 && idx < modules.length ? modules[idx] : null);
 
+const convertBeaconConfig = (config, modules) => {
+  const beaconModules = config.modules
+    .map((idx) => getModule(modules, idx));
+  const beaconCounts = config.counts
+    .map((count) => RationalFromFloat(count));
+  return {
+    modules: beaconModules,
+    counts: beaconCounts,
+  };
+};
+
 class FactorySpec {
   constructor(factories, settings, fuel, recipes, modules, moduleIdxSpec = {}, beaconSpec = {}) {
     this.settings = settings;
@@ -40,15 +51,7 @@ class FactorySpec {
     this.preferredFuel = fuel[settings.preferredFuelIdx];
     this.defaultModules = settings.defaultModuleIndices
       .map((idx) => getModule(modules, idx));
-
-    const defaultBeaconModules = settings.defaultBeaconIndices
-      .map((idx) => getModule(modules, idx));
-    const defaultBeaconCounts = settings.defaultBeaconCounts
-      .map((count) => RationalFromFloat(count));
-    this.defaultBeacons = {
-      modules: defaultBeaconModules,
-      counts: defaultBeaconCounts,
-    };
+    this.defaultBeacons = convertBeaconConfig(settings.defaultBeacons, modules);
 
     this.ignore = {};
     const moduleSpec = Object.fromEntries(
@@ -60,14 +63,8 @@ class FactorySpec {
     );
     const beaconModuleSpec = Object.fromEntries(
       Object.entries(beaconSpec).map(([recipeName, beaconConfig]) => {
-        const modulesArray = beaconConfig.modules
-          .map((idx) => getModule(modules, idx));
-        const countArray = beaconConfig.counts
-          .map((count) => RationalFromFloat(count));
-        return [recipeName, {
-          modules: modulesArray,
-          counts: countArray,
-        }];
+        const beacons = convertBeaconConfig(beaconConfig, modules);
+        return [recipeName, beacons];
       }),
     );
     this.initFactories(recipes, moduleSpec, beaconModuleSpec);

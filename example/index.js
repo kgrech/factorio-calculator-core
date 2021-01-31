@@ -32,8 +32,10 @@ const defaultSettings = {
   miningProductivity: 0,
   displayRateIdx: 1, // index in [items/sec, items/min, items/h]
   defaultModuleIndices: [5, 5, 5, 5],
-  defaultBeaconIndices: [-1, -1],
-  defaultBeaconCounts: [2, 0],
+  defaultBeacons: {
+    modules: [-1, -1],
+    counts: [8, 1],
+  },
 };
 // Create a factory specification
 const spec = new FactorySpec(factories, defaultSettings, fuels, recipes, modules);
