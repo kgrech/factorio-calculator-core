@@ -48,10 +48,8 @@ const {
 } = require('./rational');
 const { Module, getModules } = require('./module');
 
-const gameDataVanilla110 = require('../data/vanilla-1.1.0.json');
-const gameDataVanilla110Expensive = require('../data/vanilla-1.1.0-expensive.json');
-const gameDataVanilla100 = require('../data/vanilla-1.0.0.json');
-const gameDataVanilla100Expensive = require('../data/vanilla-1.0.0-expensive.json');
+const gameDataVanilla1119 = require('../data/vanilla-1.1.19.json');
+const gameDataVanilla1119Expensive = require('../data/vanilla-1.1.19-expensive.json');
 
 module.exports = {
   Belt,
@@ -79,10 +77,8 @@ module.exports = {
   displayCount,
   displayRate,
   formatName,
-  gameDataVanilla100,
-  gameDataVanilla100Expensive,
-  gameDataVanilla110,
-  gameDataVanilla110Expensive,
+  gameDataVanilla1119,
+  gameDataVanilla1119Expensive,
   getBelts,
   getCategorizedFactories,
   getFuel,

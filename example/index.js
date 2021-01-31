@@ -1,5 +1,5 @@
 const {
-  gameDataVanilla110, // Import required version data
+  gameDataVanilla1119, // Import required version data
   getRecipeGraph,
   getItemGroups,
   BuildTarget,
@@ -14,7 +14,7 @@ const {
   displayRate,
 } = require('@kgrech/factorio-calculator-core');
 
-const data = gameDataVanilla110; // Using version 1.1.0
+const data = gameDataVanilla1119; // Using version 1.1.19
 
 const graph = getRecipeGraph(data);
 const items = graph[0]; // List of all items
@@ -32,8 +32,8 @@ const defaultSettings = {
   miningProductivity: 0,
   displayRateIdx: 1, // index in [items/sec, items/min, items/h]
   defaultModuleIndices: [5, 5, 5, 5],
-  defaultBeaconIdx: -1,
-  defaultBeaconCount: 0,
+  defaultBeaconIndices: [-1, -1],
+  defaultBeaconCounts: [2, 0],
 };
 // Create a factory specification
 const spec = new FactorySpec(factories, defaultSettings, fuels, recipes, modules);

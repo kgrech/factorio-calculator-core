@@ -43,8 +43,8 @@ class FactoryDef {
     return this.moduleSlots < other.moduleSlots;
   }
 
-  makeFactory(spec, recipe, moduleSpec) {
-    return new Factory(this, spec, recipe, moduleSpec);
+  makeFactory(spec, recipe, moduleSpec, beaconModuleSpec) {
+    return new Factory(this, spec, recipe, moduleSpec, beaconModuleSpec);
   }
 
   canBeacon() {
@@ -63,8 +63,8 @@ class MinerDef extends FactoryDef {
     return this.mining_speed.less(other.mining_speed);
   }
 
-  makeFactory(spec, recipe, moduleSpec) {
-    return new Miner(this, spec, recipe, moduleSpec);
+  makeFactory(spec, recipe, moduleSpec, beaconModuleSpec) {
+    return new Miner(this, spec, recipe, moduleSpec, beaconModuleSpec);
   }
 }
 
@@ -75,8 +75,8 @@ class RocketLaunchDef extends FactoryDef {
     this.partRecipe = partRecipe;
   }
 
-  makeFactory(spec, recipe, moduleSpec) {
-    return new RocketLaunch(this, spec, recipe, moduleSpec);
+  makeFactory(spec, recipe, moduleSpec, beaconModuleSpec) {
+    return new RocketLaunch(this, spec, recipe, moduleSpec, beaconModuleSpec);
   }
 }
 
@@ -87,8 +87,8 @@ class RocketSiloDef extends FactoryDef {
     this.partRecipe = partRecipe;
   }
 
-  makeFactory(spec, recipe, moduleSpec) {
-    return new RocketSilo(this, spec, recipe, moduleSpec);
+  makeFactory(spec, recipe, moduleSpec, beaconModuleSpec) {
+    return new RocketSilo(this, spec, recipe, moduleSpec, beaconModuleSpec);
   }
 }
 

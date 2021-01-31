@@ -29,7 +29,7 @@ const displayRates = [one, RationalFromFloat(60), RationalFromFloat(3600)];
 const getModule = (modules, idx) => (idx >= 0 && idx < modules.length ? modules[idx] : null);
 
 class FactorySpec {
-  constructor(factories, settings, fuel, recipes, modules, moduleIdxSpec = {}) {
+  constructor(factories, settings, fuel, recipes, modules, moduleIdxSpec = {}, beaconSpec = {}) {
     this.settings = settings;
     this.factories = factories;
     this.furnace = factories.smelting[settings.preferredFurnaceIdx];
@@ -38,11 +38,17 @@ class FactorySpec {
     this.miningProd = RationalFromFloat(settings.miningProductivity / 100.0);
     this.displayRateFactor = displayRates[settings.displayRateIdx];
     this.preferredFuel = fuel[settings.preferredFuelIdx];
-    this.defaultModules = this.settings.defaultModuleIndices
+    this.defaultModules = settings.defaultModuleIndices
       .map((idx) => getModule(modules, idx));
 
-    this.defaultBeacon = getModule(modules, settings.defaultBeaconIdx);
-    this.defaultBeaconCount = RationalFromFloat(settings.defaultBeaconCount);
+    const defaultBeaconModules = settings.defaultBeaconIndices
+      .map((idx) => getModule(modules, idx));
+    const defaultBeaconCounts = settings.defaultBeaconCounts
+      .map((count) => RationalFromFloat(count));
+    this.defaultBeacons = {
+      modules: defaultBeaconModules,
+      counts: defaultBeaconCounts,
+    };
 
     this.ignore = {};
     const moduleSpec = Object.fromEntries(
@@ -52,17 +58,28 @@ class FactorySpec {
         return [recipeName, modulesArray];
       }),
     );
-    this.initFactories(recipes, moduleSpec);
+    const beaconModuleSpec = Object.fromEntries(
+      Object.entries(beaconSpec).map(([recipeName, beaconConfig]) => {
+        const modulesArray = beaconConfig.modules
+          .map((idx) => getModule(modules, idx));
+        const countArray = beaconConfig.counts
+          .map((count) => RationalFromFloat(count));
+        return [recipeName, {
+          modules: modulesArray,
+          counts: countArray,
+        }];
+      }),
+    );
+    this.initFactories(recipes, moduleSpec, beaconModuleSpec);
   }
 
-  initFactories(recipes, moduleSpec) {
+  initFactories(recipes, moduleSpec, beaconModuleSpec) {
     this.spec = {};
     Object.values(recipes)
       .filter((recipe) => recipe.category)
       .forEach((recipe) => {
         const factoryDef = this.getFactoryDef(recipe);
-        this.spec[recipe.name] = factoryDef.makeFactory(this, recipe, moduleSpec);
-        this.spec[recipe.name].beaconCount = this.defaultBeaconCount;
+        this.spec[recipe.name] = factoryDef.makeFactory(this, recipe, moduleSpec, beaconModuleSpec);
       });
   }
 

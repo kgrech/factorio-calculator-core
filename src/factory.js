@@ -20,8 +20,10 @@ const {
   RationalFromFloats,
 } = require('./rational');
 
+const MINIMUM_POWER = RationalFromFloats(1, 5);
+
 class Factory {
-  constructor(factoryDef, spec, recipe, moduleSpec) {
+  constructor(factoryDef, spec, recipe, moduleSpec, beaconModuleSpec) {
     this.recipe = recipe;
     this.name = factoryDef.name;
     this.factory = factoryDef;
@@ -31,8 +33,13 @@ class Factory {
       : spec.defaultModules;
     this.setModules(factoryDef, defaultModules);
 
-    this.beaconModule = spec.defaultBeacon;
-    this.beaconCount = spec.defaultBeaconCount;
+    this.beaconModules = beaconModuleSpec[recipe.name]
+      ? beaconModuleSpec[recipe.name].modules
+      : spec.defaultBeacons.modules;
+
+    this.beaconCounts = beaconModuleSpec[recipe.name]
+      ? beaconModuleSpec[recipe.name].counts
+      : spec.defaultBeacons.counts;
   }
 
   setModules(factoryDef, definedModules) {
@@ -71,9 +78,13 @@ class Factory {
       .filter((module) => module)
       .reduce((acc, module) => acc.add(module.speed), one);
     if (this.modules.length > 0) {
-      const { beaconModule } = this;
-      if (beaconModule) {
-        speed = speed.add(beaconModule.speed.mul(this.beaconCount).mul(half));
+      for (let i = 0; i < this.beaconModules.length; i += 1) {
+        if (this.beaconModules[i]) {
+          const extra = this.beaconModules[i].speed
+            .mul(this.beaconCounts[i])
+            .mul(half);
+          speed = speed.add(extra);
+        }
       }
     }
     return speed;
@@ -89,15 +100,19 @@ class Factory {
     let power = this.modules
       .filter((module) => module)
       .reduce((acc, module) => acc.add(module.power), one);
+
     if (this.modules.length > 0) {
-      const { beaconModule } = this;
-      if (beaconModule) {
-        power = power.add(beaconModule.power.mul(this.beaconCount).mul(half));
+      for (let i = 0; i < this.beaconModules.length; i += 1) {
+        if (this.beaconModules[i]) {
+          const extra = this.beaconModules[i].power
+            .mul(this.beaconCounts[i])
+            .mul(half);
+          power = power.add(extra);
+        }
       }
     }
-    const minimum = RationalFromFloats(1, 5);
-    if (power.less(minimum)) {
-      power = minimum;
+    if (power.less(MINIMUM_POWER)) {
+      power = MINIMUM_POWER;
     }
     return power;
   }
