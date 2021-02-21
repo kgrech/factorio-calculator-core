@@ -25,7 +25,6 @@ Please see example of minimal usage of the package in the [example](https://gith
 
 ## Available APIs
 
-- BuildTarget
 - FactorySpec
 - Item
 - Module
@@ -39,6 +38,9 @@ Please see example of minimal usage of the package in the [example](https://gith
 - displayCount
 - displayRate
 - formatName
+- getRateAndFactories
+- getRate
+- getFactories
 - getBelts
 - getCategorizedFactories
 - getFuel

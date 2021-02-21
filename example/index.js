@@ -2,7 +2,7 @@ const {
   gameDataVanilla1119, // Import required version data
   getRecipeGraph,
   getItemGroups,
-  BuildTarget,
+  getRate,
   Solver,
   getCategorizedFactories,
   FactorySpec,
@@ -93,10 +93,13 @@ const count = '100';
 
 // Define a build target
 console.log(`=== Configuring ${count} of ${itemToConfigure}===`);
-const target = new BuildTarget(itemToConfigure, 0);
-target.setRate(spec, count);
+const target = {
+  itemName: itemToConfigure,
+  recipeIndex: 0,
+  rate: count,
+};
 const rates = {
-  'logistic-robot': target.getRate(solver, spec),
+  'logistic-robot': getRate(solver, spec, target),
 };
 
 const totals = solver.solve(rates, spec.ignore, spec);

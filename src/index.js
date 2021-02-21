@@ -9,7 +9,11 @@ const {
   getGroups,
   getFuelUsers,
 } = require('./display');
-const { BuildTarget } = require('./target');
+const {
+  getRate,
+  getFactories,
+  getRateAndFactories,
+} = require('./target');
 const { Belt, getBelts } = require('./belt');
 const {
   Factory,
@@ -53,7 +57,9 @@ const gameDataVanilla1119Expensive = require('../data/vanilla-1.1.19-expensive.j
 
 module.exports = {
   Belt,
-  BuildTarget,
+  getRate,
+  getFactories,
+  getRateAndFactories,
   Factory,
   FactoryDef,
   FactorySpec,
