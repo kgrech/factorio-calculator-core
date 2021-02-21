@@ -48,16 +48,16 @@ Item.prototype = {
     const recipeName = this.recipeNames[0];
     const recipe = recipes[recipeName];
     const gives = recipe.gives(this, spec);
-    rate = rate.div(gives);
-    totals.add(recipe.name, rate);
-    if (ignore[recipe.name]) {
+    const rateDivided = rate.div(gives);
+    totals.add(recipe.name, rateDivided);
+    if (ignore.has(recipe.name)) {
       return totals;
     }
     const ingredients = recipe.ingredients.concat(recipe.fuelIngredient(spec));
-    for (let i = 0; i < ingredients.length; i++) {
+    for (let i = 0; i < ingredients.length; i += 1) {
       const ing = ingredients[i];
       const subTotals = ing.item.produce(
-        rate.mul(ing.amount),
+        rateDivided.mul(ing.amount),
         ignore,
         spec,
         recipes,

@@ -40,7 +40,8 @@ const convertBeaconConfig = (config, modules) => {
 };
 
 class FactorySpec {
-  constructor(factories, settings, fuel, recipes, modules, moduleIdxSpec = {}, beaconSpec = {}) {
+  constructor(factories, settings, fuel, recipes, modules,
+    moduleIdxSpec = {}, beaconSpec = {}, ignore = []) {
     this.settings = settings;
     this.factories = factories;
     this.furnace = factories.smelting[settings.preferredFurnaceIdx];
@@ -53,7 +54,7 @@ class FactorySpec {
       .map((idx) => getModule(modules, idx));
     this.defaultBeacons = convertBeaconConfig(settings.defaultBeacons, modules);
 
-    this.ignore = {};
+    this.ignore = new Set(ignore);
     const moduleSpec = Object.fromEntries(
       Object.entries(moduleIdxSpec).map(([recipeName, indexArray]) => {
         const modulesArray = indexArray
