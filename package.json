@@ -1,6 +1,6 @@
 {
   "name": "@kgrech/factorio-calculator-core",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Contains the code of the core algorithm of the factorio calculator",
   "main": "src/index.js",
   "scripts": {

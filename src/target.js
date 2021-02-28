@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 
 const { zero, one, RationalFromString } = require('./rational');
+const { displayCount, displayRate } = require('./display');
 
 const getRateAndFactories = (solver, spec, target) => {
   const item = solver.items[target.itemName];
@@ -26,7 +27,7 @@ const getRateAndFactories = (solver, spec, target) => {
     };
   }
   baseRate = baseRate.mul(recipe.gives(item, spec));
-  if (target.rate) {
+  if (target.rateUpdated) {
     const rate = RationalFromString(target.rate).div(spec.displayRateFactor);
     const factories = rate.div(baseRate);
     return { rate, factories };
@@ -39,8 +40,18 @@ const getRateAndFactories = (solver, spec, target) => {
 const getRate = (solver, spec, target) => getRateAndFactories(solver, spec, target).rate;
 const getFactories = (solver, spec, target) => getRateAndFactories(solver, spec, target).factories;
 
+const updateTarget = (solver, spec, target) => {
+  const { rate, factories } = getRateAndFactories(solver, spec, target);
+  return {
+    ...target,
+    rate: displayRate(rate, spec),
+    factories: displayCount(factories, spec),
+  };
+};
+
 module.exports = {
   getRateAndFactories,
   getRate,
   getFactories,
+  updateTarget,
 };

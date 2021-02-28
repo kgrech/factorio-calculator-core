@@ -14,15 +14,23 @@ const {
   displayRate,
 } = require('@kgrech/factorio-calculator-core');
 
-const data = gameDataVanilla1119; // Using version 1.1.19
+const gameData = gameDataVanilla1119; // Using version 1.1.19
 
-const graph = getRecipeGraph(data);
+const graph = getRecipeGraph(gameData);
 const items = graph[0]; // List of all items
 const recipes = graph[1]; // List of all recipes
-const fuels = getFuel(data, items).chemical; // List of chemical for furnaces
-const modules = getModules(data);
+const fuels = getFuel(gameData, items).chemical; // List of chemical for furnaces
+const modules = getModules(gameData);
 
-const factories = getCategorizedFactories(data, recipes);
+const factories = getCategorizedFactories(gameData, recipes);
+
+const data = {
+  factories,
+  fuel: fuels,
+  recipes,
+  modules,
+};
+
 const defaultSettings = {
   ratePrecision: 2, // defines behaviour of displayRate
   countPrecision: 2, // defines behaviour of displayCount
@@ -33,12 +41,15 @@ const defaultSettings = {
   displayRateIdx: 1, // index in [items/sec, items/min, items/h]
   defaultModuleIndices: [5, 5, 5, 5],
   defaultBeacons: {
-    modules: [-1, -1],
-    counts: [8, 1],
+    modules: [5, 5],
+    counts: [1, 1],
   },
+  moduleSpec: {},
+  beaconSpec: { },
+  ignore: [],
 };
 // Create a factory specification
-const spec = new FactorySpec(factories, defaultSettings, fuels, recipes, modules);
+const spec = new FactorySpec(data, defaultSettings);
 
 console.log('=== Available fuel types ===');
 fuels.forEach((fuel) => {
@@ -60,7 +71,7 @@ console.log('');
 console.log('');
 
 // Items to select grouped like in the game
-const itemGroups = getItemGroups(items, data);
+const itemGroups = getItemGroups(items, gameData);
 console.log('=== Available items to build: ===');
 itemGroups.forEach((group, idx) => {
   console.log(`\t== Group ${idx}==`);
@@ -73,7 +84,7 @@ console.log('');
 console.log('');
 
 console.log('=== Available belt types ===');
-const belts = getBelts(data);
+const belts = getBelts(gameData);
 belts.forEach((belt) => {
   console.log(`${belt.name}: ${displayRate(belt.speed, spec)}`);
 });
@@ -88,19 +99,26 @@ solver.findSubgraphs(spec, recipes);
 // Disable kovarex process (just as an example)
 solver.addDisabledRecipes(['kovarex-enrichment-process']);
 
-const itemToConfigure = 'logistic-robot';
-const count = '100';
+const itemsToConfigure = [
+  'automation-science-pack',
+  'logistic-science-pack',
+  'military-science-pack',
+  'chemical-science-pack',
+  'utility-science-pack',
+  'space-science-pack',
+];
+const count = '60';
 
 // Define a build target
-console.log(`=== Configuring ${count} of ${itemToConfigure}===`);
-const target = {
-  itemName: itemToConfigure,
-  recipeIndex: 0,
-  rate: count,
-};
-const rates = {
-  'logistic-robot': getRate(solver, spec, target),
-};
+const rates = Object.fromEntries(itemsToConfigure.map((item) => {
+  console.log(`=== Configuring ${count} of ${item}===`);
+  return [item, getRate(solver, spec, {
+    itemName: item,
+    recipeIndex: 0,
+    rate: count,
+    rateUpdated: true,
+  })];
+}));
 
 const totals = solver.solve(rates, spec.ignore, spec);
 const itemRates = getItemRates(totals, recipes, spec);

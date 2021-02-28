@@ -13,6 +13,7 @@ const {
   getRate,
   getFactories,
   getRateAndFactories,
+  updateTarget,
 } = require('./target');
 const { Belt, getBelts } = require('./belt');
 const {
@@ -60,6 +61,7 @@ module.exports = {
   getRate,
   getFactories,
   getRateAndFactories,
+  updateTarget,
   Factory,
   FactoryDef,
   FactorySpec,

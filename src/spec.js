@@ -40,35 +40,34 @@ const convertBeaconConfig = (config, modules) => {
 };
 
 class FactorySpec {
-  constructor(factories, settings, fuel, recipes, modules,
-    moduleIdxSpec = {}, beaconSpec = {}, ignore = []) {
+  constructor(data, settings) {
     this.settings = settings;
-    this.factories = factories;
-    this.furnace = factories.smelting[settings.preferredFurnaceIdx];
-    this.minimum = factories.crafting[settings.preferredMinimumAssemblerIdx];
+    this.factories = data.factories;
+    this.furnace = data.factories.smelting[settings.preferredFurnaceIdx];
+    this.minimum = data.factories.crafting[settings.preferredMinimumAssemblerIdx];
 
     this.miningProd = RationalFromFloat(settings.miningProductivity / 100.0);
     this.displayRateFactor = displayRates[settings.displayRateIdx];
-    this.preferredFuel = fuel[settings.preferredFuelIdx];
+    this.preferredFuel = data.fuel[settings.preferredFuelIdx];
     this.defaultModules = settings.defaultModuleIndices
-      .map((idx) => getModule(modules, idx));
-    this.defaultBeacons = convertBeaconConfig(settings.defaultBeacons, modules);
+      .map((idx) => getModule(data.modules, idx));
+    this.defaultBeacons = convertBeaconConfig(settings.defaultBeacons, data.modules);
 
-    this.ignore = new Set(ignore);
+    this.ignore = new Set(settings.ignore);
     const moduleSpec = Object.fromEntries(
-      Object.entries(moduleIdxSpec).map(([recipeName, indexArray]) => {
+      Object.entries(settings.moduleSpec).map(([recipeName, indexArray]) => {
         const modulesArray = indexArray
-          .map((idx) => getModule(modules, idx));
+          .map((idx) => getModule(data.modules, idx));
         return [recipeName, modulesArray];
       }),
     );
     const beaconModuleSpec = Object.fromEntries(
-      Object.entries(beaconSpec).map(([recipeName, beaconConfig]) => {
-        const beacons = convertBeaconConfig(beaconConfig, modules);
+      Object.entries(settings.beaconSpec).map(([recipeName, beaconConfig]) => {
+        const beacons = convertBeaconConfig(beaconConfig, data.modules);
         return [recipeName, beacons];
       }),
     );
-    this.initFactories(recipes, moduleSpec, beaconModuleSpec);
+    this.initFactories(data.recipes, moduleSpec, beaconModuleSpec);
   }
 
   initFactories(recipes, moduleSpec, beaconModuleSpec) {
