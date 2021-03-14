@@ -42,10 +42,11 @@ const getFactories = (solver, spec, target) => getRateAndFactories(solver, spec,
 
 const updateTarget = (solver, spec, target) => {
   const { rate, factories } = getRateAndFactories(solver, spec, target);
+
   return {
     ...target,
-    rate: displayRate(rate, spec),
-    factories: displayCount(factories, spec),
+    rate: target.rateUpdated ? target.rate : displayRate(rate, spec),
+    factories: target.rateUpdated ? displayCount(factories, spec) : target.factories,
   };
 };
 

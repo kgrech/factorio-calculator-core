@@ -1,6 +1,6 @@
 {
   "name": "factorio-calculator-core-example",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Example usage of factorio-calculator-core",
   "main": "index.js",
   "scripts": {
@@ -15,6 +15,6 @@
     "eslint-plugin-import": "^2.22.1"
   },
   "dependencies": {
-    "@kgrech/factorio-calculator-core": "^1.0.14"
+    "@kgrech/factorio-calculator-core": "^1.0.15"
   }
 }
